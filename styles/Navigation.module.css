@@ -1,0 +1,14 @@
+.navlist {
+    background-color: var(--lightergray);
+    min-width: 15rem;
+    color: white;
+}
+
+.navlist li {
+    padding: 0;
+}
+
+.navlist-title {
+    background-color: var(--darkgray);
+    height: 2rem;
+}

@@ -1,0 +1,8 @@
+.tagbar {
+    max-width: 100%;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    max-height: 10rem;
+}
