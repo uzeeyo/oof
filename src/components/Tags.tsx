@@ -10,7 +10,7 @@ type Props = {
 
 function Tags({ tags }: Props) {
   return (
-    <div className={`flex-row ${style.tagbar}`}>
+    <div className={`flex flex-row ${style.tagbar} flex-align`}>
       {tags.map((tag) => (
         <Chip
           label={`#${tag}`}

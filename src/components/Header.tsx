@@ -13,7 +13,9 @@ const Header = (props: Props) => {
         <div className={style.titlebar}>
           <div className={style.logo}>
             <Link href="/">
-              <img src="/images/logo.png" />
+              <a>
+                <img src="/images/logo.png" />
+              </a>
             </Link>
           </div>
 

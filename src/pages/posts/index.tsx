@@ -4,8 +4,9 @@ import { GetServerSideProps } from "next";
 
 import Secret from "../../components/Secret";
 import Navigation from "../../components/Navigation";
-import style from '../../styles/Post.module.css'
+import style from "../../styles/Post.module.css";
 import Tags from "../../components/Tags";
+import Meta from "../../components/Meta";
 
 type Props = {
   posts: IPost[];
@@ -14,20 +15,24 @@ type Props = {
 
 function index({ posts, tags }: Props) {
   return (
-    <div className="flex-col p20">
-      <Tags tags={tags} />
-      <div className={` flex-row`}>
-        <div className={`flex-col flex-align flex-gap p20 flex-fill`}>
-          {posts.map((post) => (
-            <Secret secret={post} />
-          ))}
-        </div>
+    <>
+      <Meta title="oof - Posts" description="Browse the newest posts." />
 
-        <div className={`${style.nav}`}>
-          <Navigation />
+      <div className="flex flex-col p20">
+        <Tags tags={tags} />
+        <div className={`flex flex-row`}>
+          <div className={`flex flex-col flex-grow flex-align flex-gap p20`}>
+            {posts.map((post) => (
+              <Secret secret={post} />
+            ))}
+          </div>
+
+          <div className={`${style.nav}`}>
+            <Navigation />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

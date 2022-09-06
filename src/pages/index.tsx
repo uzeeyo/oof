@@ -6,8 +6,8 @@ import styles from "../styles/index.module.css";
 
 const Home: NextPage = () => {
   return (
-    <div className={`${styles.seperator} h100`}>
-      <div className="flex-fill p20">fdsgds</div>
+    <div className={`flex items-stretch h100`}>
+      <div className="p20 flex-grow">fdsgds</div>
 
       <div className={`${styles.signinbox} flex-col`}>
         <h2>Get started!</h2>
@@ -15,11 +15,11 @@ const Home: NextPage = () => {
           <form className="flex-col">
             <div className={styles.textbox}>
               <Email />
-              <input placeholder="Email" required id="email" type="email"/>
+              <input placeholder="Email" required id="email" type="email" />
             </div>
             <div className={styles.textbox}>
               <Key />
-              <input placeholder="Password" type="password"/>
+              <input placeholder="Password" type="password" />
             </div>
             <div className="flex-row flex-align flex-justify-end">
               <p>Stay logged in?</p>

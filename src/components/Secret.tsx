@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import style from "../styles/Secret.module.css";
-import {IconButton, Checkbox} from "@mui/material/";
-import {Favorite, FavoriteBorder, Comment, CommentOutlined} from "@mui/icons-material/";
+import { IconButton, Checkbox } from "@mui/material/";
+import {
+  Favorite,
+  FavoriteBorder,
+  Comment,
+  CommentOutlined,
+} from "@mui/icons-material/";
 import IPost from "../types/IPost";
 
 type Props = {
@@ -10,13 +15,13 @@ type Props = {
 
 const Secret = ({ secret }: Props) => {
   return (
-    <div className={`${style.secret} flex-col shadow`}>
+    <div className={`${style.secret} flex flex-col shadow`}>
       <div className={style.strip} />
       <div className="secret-text text-wrap">
-        <p> {secret.text}</p>
+        <p className="text-xl"> {secret.text}</p>
       </div>
 
-      <div className={`${style["secret-menu"]} flex-row bot`}>
+      <div className={`${style["secret-menu"]} flex flex-row bot`}>
         <Checkbox
           color="secondary"
           icon={<FavoriteBorder />}

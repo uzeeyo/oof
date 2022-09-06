@@ -9,17 +9,12 @@ import { theme } from "../config/theme";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Layout>
-      <div className="content flex-col">
-        <ThemeProvider theme={theme}>
-          <div className="h100 flex-col">
-            <Header />
-            <div className="flex-fill">
-              <Component {...pageProps} />
-
-            </div>
-          </div>
-        </ThemeProvider>
-      </div>
+      <ThemeProvider theme={theme}>
+        <div className="flex flex-col h-min">
+          <Header />
+          <Component {...pageProps} />
+        </div>
+      </ThemeProvider>
     </Layout>
   );
 }
