@@ -8,16 +8,16 @@ datasource db {
 }
 
 model Post {
-  postID     Int       @id(map: "posts_pkey") @default(autoincrement())
-  userID     String
+  id     Int       @id(map: "posts_pkey") @default(autoincrement())
+  userId     String
   text       String?
   imageUrl   String?
   videoUrl   String?
   likes      Int       @default(0)
   views      Int       @default(0)
-  createdAt  DateTime  @db.Date
-  archivedAt DateTime? @db.Date
-  User       User      @relation(fields: [userID], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_posts_users")
+  createdAt  DateTime  @default(now())
+  archivedAt DateTime? 
+  User       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_posts_users")
 }
 
 model Account {
@@ -52,10 +52,15 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified DateTime?
+  password      String?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  posts              Post[]
+  createdAt     DateTime  @default(now())
+  archivedAt    DateTime?
+  lastLogin     DateTime?
+  failedLogins  Int       @default(0)
+  posts         Post[]
 }
 
 model VerificationToken {
