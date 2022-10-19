@@ -2,8 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../_config";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  //To get comments by pagination
   if (req.method == "GET") {
     const posts = await prisma.post.findMany({
+      skip: req.body.skip || 0,
+      take: 10,
       where: {
         archivedAt: null,
       },
@@ -11,7 +14,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         id: true,
         text: true,
         imageUrl: true,
-        likes: true,
+        _count: {
+          select: {
+            likes: true,
+          },
+        },
         createdAt: true,
       },
     });
@@ -19,6 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).send(posts);
   }
 
+  //To post a comment
   if (req.method == "POST") {
     const post = req.body;
 
@@ -34,10 +42,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       console.log(err);
       return res.status(500).send("Something went wrong.");
     }
-  }
-
-  else {
-    return res.status(500)
+  } else {
+    return res.status(500);
   }
 };
 
