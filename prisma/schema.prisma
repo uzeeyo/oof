@@ -8,65 +8,86 @@ datasource db {
 }
 
 model Post {
-  id     Int       @id(map: "posts_pkey") @default(autoincrement())
-  userId     String
-  text       String?
-  imageUrl   String?
-  videoUrl   String?
-  likes      Int       @default(0)
-  views      Int       @default(0)
-  createdAt  DateTime  @default(now())
-  archivedAt DateTime? 
-  User       User      @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_posts_users")
+  id         String               @id(map: "posts_pkey") @default(cuid())
+  userId     String           
+  text       String?            
+  imageUrl   String?            
+  videoUrl   String?            
+  views      Int                  @default(0)
+  createdAt  DateTime             @default(now())
+  archivedAt DateTime?            
+  User       User                 @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_posts_users")
+  comments   Comment[]
+  likes      Like[]
+  reports    Report[]
+  tags       PostTag[]
 }
 
-model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
+model Tag {
+  id                String        @id @default(cuid())
+  name              String        @unique
+  posttags          PostTag[]
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model PostTag {
+  id                String        @id @default(cuid())
+  postId            String
+  tagId             String
+  post              Post          @relation(fields: [postId], references: [id])
+  tag               Tag           @relation(fields: [tagId], references: [id])
+
 }
 
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  createdAt     DateTime  @default(now())
-  archivedAt    DateTime?
-  lastLogin     DateTime?
-  failedLogins  Int       @default(0)
-  posts         Post[]
+model Comment {
+  id                String        @id @default(cuid())
+  text              String
+  imageUrl          String?
+  createdAt         DateTime      @default(now())
+  postId            String
+  post              Post          @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
 
-  @@unique([identifier, token])
+model Like {
+  id                String        @id @default(cuid())
+  userId            String
+  postId            String
+  user              User          @relation(fields: [userId], references: [id])
+  post              Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model User {    
+  id                String        @id @default(cuid())
+  username          String        @unique
+  email             String?       @unique
+  emailVerified     DateTime?
+  password          String?
+  createdAt         DateTime      @default(now())
+  archivedAt        DateTime?   
+  lastLogin         DateTime?
+  failedLogins      Int           @default(0)
+  posts             Post[]
+  likes             Like[]
+  reports           Report[]
+  settings          UserSettings?
+}
+
+model UserSettings {
+  id                String        @id @default(cuid())
+  darkMode          Boolean       @default(false)
+  anonymous         Boolean       @default(true)
+  profilePic        String?
+  showPorn          Boolean       @default(false)
+  showViolence      Boolean       @default(false)
+  userId            String        @unique
+  user              User          @relation(fields: [userId], references: [id])
+}
+
+model Report {
+  id            String            @id @default(cuid())
+  postId        String
+  userId        String
+  post          Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user          User              @relation(fields: [userId], references: [id])
+
 }
