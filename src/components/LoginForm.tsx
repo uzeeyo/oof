@@ -1,13 +1,8 @@
-import { Email, Key } from "@mui/icons-material";
+import { Person, Key } from "@mui/icons-material";
 import { Checkbox } from "@mui/material";
-import { setCookie } from "cookies-next";
+import { useRouter } from "next/router";
 
-import React, {
-  ChangeEvent,
-  FormEvent,
-  FormEventHandler,
-  useState,
-} from "react";
+import React, { ChangeEvent, FormEventHandler, useState } from "react";
 
 import styles from "../styles/index.module.css";
 
@@ -15,9 +10,10 @@ type Props = {};
 
 function LoginForm({}: Props) {
   const [auth, setAuth] = useState({
-    email: "",
+    username: "",
     password: "",
   });
+  const router = useRouter();
 
   const authHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setAuth({
@@ -28,16 +24,17 @@ function LoginForm({}: Props) {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const data = await fetch("localhost:3000/api/login", {
+    const data = await fetch("http://localhost:3000/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(auth),
     });
     if (data.ok) {
-      setCookie("jwt", JSON.stringify(data));
+      router.push("/posts");
     } else {
-      alert("Incorrect login.");
+      alert("Username or password is incorrect.");
     }
   };
 
@@ -47,13 +44,14 @@ function LoginForm({}: Props) {
       <div>
         <form className="flex-col" onSubmit={onSubmit} method="POST">
           <div className={styles.textbox}>
-            <Email />
+            <Person />
             <input
-              placeholder="Email"
+              placeholder="Username"
               required
-              type="email"
-              name="email"
-              value={auth.email}
+              type="text"
+              autoComplete="username"
+              name="username"
+              value={auth.username}
               onChange={authHandler}
             />
           </div>
