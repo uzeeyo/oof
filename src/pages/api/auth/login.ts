@@ -27,7 +27,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           },
           process.env.JSON_SECRET!
         );
-        return res.send(token);
+        return res
+          .status(200)
+          .setHeader("Set-Cookie", `access-token=${token}; HttpOnly`)
+          .end();
       } else {
         //If usernamae/password is wrong
         return res.status(400).send("Username or password incorrect.");
