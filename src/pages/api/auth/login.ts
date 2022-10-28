@@ -2,6 +2,7 @@ import prisma from "../_config";
 import { NextApiRequest, NextApiResponse } from "next";
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
+import moment from "moment";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == "POST") {
@@ -17,19 +18,28 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      const match = await compare(password, user!.password!);
+      if (!user) return res.status(400).send("Username or password incorrect.");
+
+      const match = await compare(password, user.password!);
       if (match) {
         //If username & password are correct return a token
         const token = sign(
           {
             exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+            userId: user.id,
             username: user!.username,
           },
-          process.env.JSON_SECRET!
+          process.env.JWT_SECRET!
         );
         return res
           .status(200)
-          .setHeader("Set-Cookie", `access-token=${token}; HttpOnly`)
+          .setHeader(
+            "Set-Cookie",
+            `access-token=${token}; HttpOnly; Path=/; Expires=${moment().add(
+              3,
+              "days"
+            )}`
+          )
           .end();
       } else {
         //If usernamae/password is wrong
