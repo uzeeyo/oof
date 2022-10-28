@@ -7,6 +7,10 @@ import Navigation from "../../components/Navigation";
 import style from "../../styles/Post.module.css";
 import Tags from "../../components/Tags";
 import Meta from "../../components/Meta";
+import PostBuilder from "../../components/PostBuilder";
+import prisma from "../api/_config";
+import { getPosts } from "../api/posts";
+import { tagRegex } from "../../lib/tags";
 
 type Props = {
   posts: IPost[];
@@ -20,14 +24,17 @@ function index({ posts, tags }: Props) {
 
       <div className="flex flex-col p20">
         <Tags tags={tags} />
-        <div className={`flex flex-row`}>
-          <div className={`flex flex-col flex-grow flex-align flex-gap p20`}>
+        <PostBuilder />
+        <div className="grid grid-cols-4">
+          <div
+            className={`flex flex-col flex-grow flex-align flex-gap p20 col-start-2 col-span-2 max-w-[35rem] m-auto`}
+          >
             {posts.map((post) => (
               <Secret secret={post} />
             ))}
           </div>
 
-          <div className={`${style.nav}`}>
+          <div className="col-start-4 p-5 max-w-[20rem]">
             <Navigation />
           </div>
         </div>
@@ -37,21 +44,7 @@ function index({ posts, tags }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  console.log("...");
-  const posts = [
-    {
-      postID: 1,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis lacinia sapien. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Sed imperdiet tempor velit sit amet molestie. Suspendisse tincidunt varius purus, vitae ultricies enim rutrum sed. Phasellus posuere id sapien in tempus. ",
-    },
-    {
-      postID: 2,
-      text: "Praesent efficitur dui a commodo sollicitudin. Cras lacinia iaculis augue a tempor. Curabitur in porta libero. Donec pulvinar turpis ut libero ultricies, faucibus egestas sem cursus. Suspendisse lacinia elit dui, in feugiat arcu bibendum at. Aliquam volutpat elementum lorem ac aliquam.",
-    },
-    {
-      postID: 3,
-      text: "Donec pellentesque fermentum nibh, id semper elit. Nulla facilisis eleifend ligula ac tempor. Aliquam erat volutpat. Morbi interdum a nibh vel porta. Curabitur eget velit elit. ",
-    },
-  ];
+  const posts = await getPosts(0);
 
   const tags = [
     "crazy",
@@ -72,7 +65,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      posts,
+      posts: JSON.parse(JSON.stringify(posts)),
       tags,
     },
   };
