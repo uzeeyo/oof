@@ -1,18 +1,24 @@
 import { Image, Videocam } from "@mui/icons-material";
 import { Button } from "@mui/material";
-import Link from "next/link";
 import React, {
   ChangeEvent,
-  ChangeEventHandler,
   FormEventHandler,
+  SetStateAction,
   useState,
 } from "react";
+import IPost from "../types/IPost";
 
-export default function () {
+type Props = {
+  addPost: Function;
+};
+
+export default function ({ addPost }: Props) {
   const [text, setText] = useState("");
+  const [errHidden, setErrHidden] = useState(true);
 
   const onTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.currentTarget.value);
+    if (!errHidden) setErrHidden(true);
   };
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -30,6 +36,9 @@ export default function () {
 
     if (res.ok) {
       setText("");
+      addPost(await res.json());
+    } else {
+      setErrHidden(false);
     }
   };
 
@@ -64,9 +73,14 @@ export default function () {
               <Videocam className="h-8 w-8" color="secondary" />
             </label>
 
-            <Button variant="outlined" className="ml-auto mr-4" type="submit">
-              Post
-            </Button>
+            <div className="ml-auto mr-4 flex flex-row items-center">
+              <p className="text-red-500 text mr-2" hidden={errHidden}>
+                <b>There was an error posting.</b>
+              </p>
+              <Button variant="outlined" type="submit">
+                Post
+              </Button>
+            </div>
           </div>
         </div>
       </form>
