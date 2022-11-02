@@ -1,4 +1,3 @@
-import { ReactNode } from "react";
 import Meta from './Meta'
 
 type Props = {

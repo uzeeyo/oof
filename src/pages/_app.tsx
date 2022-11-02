@@ -10,7 +10,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <Layout>
       <ThemeProvider theme={theme}>
-        <div className="flex flex-col h-min">
+        <div className="flex flex-col h-max">
           <Header />
           <Component {...pageProps} />
         </div>
