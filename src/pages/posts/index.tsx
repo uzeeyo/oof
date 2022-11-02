@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import type IPost from "../../types/IPost";
+import type IPost from "../../lib/types/IPost";
 import { GetServerSideProps } from "next";
 
 import Secret from "../../components/Secret";
@@ -10,9 +10,11 @@ import PostBuilder from "../../components/PostBuilder";
 import { getPosts } from "../api/posts";
 import prisma from "../api/_config";
 import { Post } from "@prisma/client";
+import { getCookie } from "cookies-next";
+import { verifyLogin } from "../../lib/auth";
 
 type Props = {
-  posts: Post[];
+  posts: IPost[];
   tags: Array<string>;
   currentTag: string | null;
 };
@@ -23,15 +25,13 @@ function index({ posts, tags, currentTag }: Props) {
     setCurrentPosts(posts);
   }, [currentTag]);
 
-  function addPost(newPost: Post) {
+  function addPost(newPost: IPost) {
     setCurrentPosts([newPost, ...currentPosts]);
   }
 
-  console.log(posts);
-
   return (
     <>
-      <Meta title="oof - Posts" description="Browse the newest posts." />
+      <Meta title="oof - Posts" description="Browse the latest posts." />
 
       <div className="flex flex-col p20">
         <Tags tags={tags} currentTag={currentTag} />
@@ -50,7 +50,11 @@ function index({ posts, tags, currentTag }: Props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+  query,
+}) => {
   const tags = [
     "crazy",
     "fun",
@@ -68,9 +72,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     "depression",
   ];
 
-  const { tag } = context.query;
+  const { tag } = query;
+  const verified = verifyLogin({ req, res });
 
-  const posts = await getPosts(0, (tag as string) || null);
+  const posts = await getPosts(
+    0,
+    tag as string,
+    verified.token?.userId || null
+  );
 
   return {
     props: {

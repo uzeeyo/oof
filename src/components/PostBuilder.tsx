@@ -6,7 +6,7 @@ import React, {
   SetStateAction,
   useState,
 } from "react";
-import IPost from "../types/IPost";
+import IPost from "../lib/types/IPost";
 
 type Props = {
   addPost: Function;

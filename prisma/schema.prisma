@@ -15,7 +15,7 @@ model Post {
   videoUrl   String?            
   views      Int                  @default(0)
   createdAt  DateTime             @default(now())
-  archivedAt DateTime?            
+  archivedAt DateTime?
   User       User                 @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_posts_users")
   comments   Comment[]
   likes      Like[]
@@ -50,10 +50,12 @@ model Comment {
 
 model Like {
   id                String        @id @default(cuid())
+  liked             Boolean
   userId            String
   postId            String
   user              User          @relation(fields: [userId], references: [id])
   post              Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  @@unique([userId, postId], map: "userId_postId")
 }
 
 model User {    

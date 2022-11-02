@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { verifyLogin } from "../../../lib/auth";
 import prisma from "../_config";
 
 export default async function handler(
@@ -6,27 +7,44 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method == "POST") {
-    try {
+    //Check cookie and verify jwt
+    const verified = verifyLogin({ req, res });
+    if (verified.err) {
+      console.log(verified);
+      return res.status(verified.err).send(verified);
+    }
+
+    //Check if valid params
+    if (!(req.body.liked) || !(req.body.postId)) {
+      return res.status(400).send("Invalid parameters.");
+    }
+
+    try { 
       if (req.body.liked == true) {
-        prisma.like.create({
+        await prisma.like.create({
           data: {
-            userId: req.body.userId,
+            userId: verified.token.userId,
             postId: req.body.postId,
+            liked: true,
           },
         });
+
         return res.status(201).send("Post liked");
-      } else {
-        prisma.like.deleteMany({
+      }
+      if (req.body.liked == false) {
+        await prisma.like.deleteMany({
           where: {
-            userId: req.body.userId,
+            userId: verified.token.userId,
             postId: req.body.postId,
           },
         });
-        return res.status(201).send("Post unliked");
+        return res.status(200).send("Post unliked");
       }
     } catch (err) {
       console.log(err);
       return res.status(500);
     }
+  } else {
+    return res.status(400).send("Invalid request");
   }
 }

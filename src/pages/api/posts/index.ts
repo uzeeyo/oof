@@ -1,17 +1,27 @@
-import { getCookie } from "cookies-next";
-import { verify } from "crypto";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { verifyLogin, verifyToken } from "../../../lib/auth";
-import { connectTags, findTags, tagRegex } from "../../../lib/tags";
+import { verifyLogin } from "../../../lib/auth";
+import { connectTags, findTags } from "../../../lib/tags";
 import prisma from "../_config";
 import { createTags } from "../../../lib/tags";
-import dp from "dompurify";
-import { Post } from "@prisma/client";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const verified = verifyLogin({ req, res });
+
   //To get comments by pagination
   if (req.method === "GET") {
-    const posts = await getPosts(req.body.skip, req.body.tag);
+    let posts;
+    console.log("API getting....");
+    //DELETE
+    console.log(verified);
+    if (verified.status === "err") {
+      posts = await getPosts(req.body.skip, req.body.tag);
+    } else {
+      posts = await getPosts(
+        req.body.skip,
+        req.body.tag,
+        verified.token.userId
+      );
+    }
     return res.status(200).send(posts);
   }
 
@@ -20,7 +30,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const post = req.body;
 
     //Check cookie and verify jwt
-    const verified = verifyLogin({ req, res });
     if (verified.err) {
       console.log(verified);
       return res.status(verified.err).send(verified);
@@ -49,66 +58,102 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export async function getPosts(skip: number, tag: string | null) {
+export async function getPosts(
+  skip: number,
+  tag: string | null,
+  userId?: string
+) {
+  //Runs first if filtering by tags
   //VERY MESSY, FIND A BETTER WAY
   let posts;
   if (tag) {
-      const formattedTag = `#${tag}`;
-      posts = await prisma.post.findMany({
-        skip: skip || 0,
-        take: 10,
-        where: {
-          archivedAt: null,
-          tags: {
-            some: {
-              tag: {
-                name: formattedTag,
-              },
+    const formattedTag = `#${tag}`;
+    posts = await prisma.post.findMany({
+      skip: skip || 0,
+      take: 10,
+      where: {
+        archivedAt: null,
+        tags: {
+          some: {
+            tag: {
+              name: formattedTag,
             },
           },
         },
-        orderBy: {
-          createdAt: "desc",
-        },
-        select: {
-          id: true,
-          text: true,
-          imageUrl: true,
-          _count: {
-            select: {
-              likes: true,
-            },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        text: true,
+        imageUrl: true,
+        likes: {
+          where: {
+            userId: userId || "",
           },
-          createdAt: true,
+          select: {
+            liked: true,
+          },
         },
-      });
+        _count: {
+          select: {
+            likes: true,
+          },
+        },
+        createdAt: true,
+      },
+    });
   } else {
-      posts = await prisma.post.findMany({
-        skip: skip || 0,
-        take: 10,
-        where: {
-          archivedAt: null,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        select: {
-          id: true,
-          text: true,
-          imageUrl: true,
-          _count: {
-            select: {
-              likes: true,
-            },
+    //Runs if query is not filtering by tags
+    posts = await prisma.post.findMany({
+      skip: skip || 0,
+      take: 10,
+      where: {
+        archivedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        text: true,
+        imageUrl: true,
+        likes: {
+          where: {
+            userId: userId || "",
           },
-          createdAt: true,
+          select: {
+            liked: true,
+          },
         },
-      });
+        _count: {
+          select: {
+            likes: true,
+          },
+        },
+        createdAt: true,
+      },
+    });
   }
-
-
-
-  return posts;
+  return posts.map((post) => {
+    //DELETE
+    // console.log(post);
+    let filteredPost: any = { ...post };
+    delete filteredPost.likes;
+    filteredPost.likeCount = convertLikes(filteredPost._count.likes);
+    delete filteredPost._count.likes;
+    filteredPost.liked = post.likes.length > 0 ? true : false;
+    return filteredPost;
+  });
 }
+
+export const convertLikes = (count: number): string => {
+  if (count == 0) return "";
+  if (1000 < count) {
+    return `${(count / 1000).toFixed(1)}K`;
+  }
+  return count.toString();
+};
 
 export default handler;

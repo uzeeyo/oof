@@ -2,10 +2,13 @@ import { Post } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
 import Secret from "../../components/Secret";
+import { verifyLogin } from "../../lib/auth";
+import IPost from "../../lib/types/IPost";
+import { convertLikes } from "../api/posts";
 import prisma from "../api/_config";
 
 interface Props {
-  post: Post;
+  post: IPost;
 }
 
 export default function ({ post }: Props) {
@@ -21,9 +24,32 @@ export default function ({ post }: Props) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const postId = context.params!.postId;
 
+  const { req, res } = context;
+  const verified = verifyLogin({ req, res });
+  const userId = verified.token?.userId;
+
   const post = await prisma.post.findFirst({
     where: {
       id: postId as string,
+    },
+    select: {
+      id: true,
+      text: true,
+      imageUrl: true,
+      likes: {
+        where: {
+          userId: userId || "",
+        },
+        select: {
+          liked: true,
+        },
+      },
+      _count: {
+        select: {
+          likes: true,
+        },
+      },
+      createdAt: true,
     },
   });
 
@@ -31,13 +57,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       notFound: true,
     };
-  } else {
-    return {
-      props: {
-        post: JSON.parse(JSON.stringify(post)),
-      },
-    };
   }
+
+  let filteredPost: any = { ...post };
+  delete filteredPost.likes;
+  filteredPost.likeCount = convertLikes(filteredPost._count.likes);
+  delete filteredPost._count.likes;
+  filteredPost.liked = post.likes.length > 0 ? true : false;
+
+  return {
+    props: {
+      post: JSON.parse(JSON.stringify(filteredPost)),
+    },
+  };
 
   return {
     notFound: true,

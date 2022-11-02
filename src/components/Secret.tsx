@@ -1,12 +1,6 @@
-import React, { useState, MouseEvent } from "react";
+import React, { useState, MouseEvent, ChangeEvent } from "react";
 import style from "../styles/Secret.module.css";
-import {
-  Checkbox,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-} from "@mui/material/";
+import { Checkbox, Divider, IconButton, Menu, MenuItem } from "@mui/material/";
 import {
   Favorite,
   FavoriteBorder,
@@ -18,14 +12,15 @@ import {
   MoreHoriz,
 } from "@mui/icons-material/";
 import Link from "next/link";
-import { Post } from "@prisma/client";
+import IPost from "../lib/types/IPost";
 
 type Props = {
-  secret: Post;
+  secret: IPost;
   key: string;
 };
 
 const Secret = ({ secret, key }: Props) => {
+  //FOR: Post menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const handleClick = (e: MouseEvent<HTMLElement>) => {
@@ -35,10 +30,25 @@ const Secret = ({ secret, key }: Props) => {
     setAnchorEl(null);
   };
 
+  //FOR: Like button
+  const [liked, setLiked] = useState(secret.liked);
+  const [likeCount, setLikeCount] = useState(secret.likeCount);
+
+  const onLikeChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    setLiked(e.target.checked);
+    const req = { postId: secret.id, liked: e.target.checked };
+    const res = await fetch("http://localhost:3000/api/posts/like", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(req),
+    });
+  };
+
   const regex = /(#[a-zA-Z0-9_\-]{1,})/g;
 
   let splittedText = secret.text?.split(/(\s+)/);
-
   const formatted = new Array<String | JSX.Element>();
 
   if (splittedText) {
@@ -72,7 +82,7 @@ const Secret = ({ secret, key }: Props) => {
     >
       <div className="ml-auto m-2">
         <a onClick={handleClick} className="cursor-pointer">
-          <MoreHoriz />
+          <MoreHoriz color="inherit" />
         </a>
       </div>
       <Menu
@@ -120,7 +130,7 @@ const Secret = ({ secret, key }: Props) => {
           />
 
           <label htmlFor="postLikes" className="ml-auto text-gray-800 text-lg">
-            1.4k
+            {likeCount}
           </label>
           <Checkbox
             id="postLikes"
@@ -128,6 +138,8 @@ const Secret = ({ secret, key }: Props) => {
             icon={<FavoriteBorder />}
             checkedIcon={<Favorite />}
             className={`${style["secret-menu-item"]}`}
+            checked={liked}
+            onChange={onLikeChange}
           />
         </div>
       </div>
