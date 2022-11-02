@@ -1,6 +1,4 @@
-import { Post } from "@prisma/client";
 import { GetServerSideProps, NextPage } from "next";
-import { useRouter } from "next/router";
 import Secret from "../../components/Secret";
 import { verifyLogin } from "../../lib/auth";
 import IPost from "../../lib/types/IPost";

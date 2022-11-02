@@ -3,14 +3,10 @@ import type IPost from "../../lib/types/IPost";
 import { GetServerSideProps } from "next";
 
 import Secret from "../../components/Secret";
-import Navigation from "../../components/Navigation";
 import Tags from "../../components/Tags";
 import Meta from "../../components/Meta";
 import PostBuilder from "../../components/PostBuilder";
 import { getPosts } from "../api/posts";
-import prisma from "../api/_config";
-import { Post } from "@prisma/client";
-import { getCookie } from "cookies-next";
 import { verifyLogin } from "../../lib/auth";
 
 type Props = {
