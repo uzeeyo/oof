@@ -20,7 +20,14 @@ function Tags({ tags, currentTag }: Props) {
     <div className={`flex flex-row ${style.tagbar} flex-align`}>
       {tags.map((tag) => {
         if (tag == currentTag) {
-          return <Chip label={`#${tag}`} onClick={onClick} color="secondary" />;
+          return (
+            <Chip
+              label={`#${tag}`}
+              onClick={onClick}
+              color="secondary"
+              key={tag.slice(1)}
+            />
+          );
         }
         return (
           <Chip

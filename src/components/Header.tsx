@@ -1,14 +1,21 @@
-import React, { useState, MouseEvent } from "react";
+import React, {
+  useState,
+  MouseEvent,
+  FormEventHandler,
+  ChangeEvent,
+} from "react";
 import style from "../styles/Header.module.css";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
 import { Button, IconButton, Menu, MenuItem } from "@mui/material";
 import { FavoriteBorder, Logout, Settings } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
 type Props = {};
 
 const Header = (props: Props) => {
+  //FOR: User menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
   const handleClick = (e: MouseEvent<HTMLElement>) => {
@@ -16,6 +23,21 @@ const Header = (props: Props) => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  //FOR: Tag Search
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+  const onSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.currentTarget.value);
+  };
+  const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    if (searchQuery.length > 0) {
+      router.push(`/posts?tag=${searchQuery}`);
+    } else {
+      router.push("/posts");
+    }
   };
 
   return (
@@ -32,10 +54,12 @@ const Header = (props: Props) => {
 
           <div className="flex flex-row ml-auto mr-auto rounded-xl bg-slate-50 pt-1 pb-1 pr-3 pl-3">
             <SearchIcon htmlColor="white" color="primary" />
-            <form>
+            <form onSubmit={onSubmit}>
               <input
                 className="bg-slate-50 focus:outline-none w-80"
                 placeholder="Search tags..."
+                value={searchQuery}
+                onChange={onSearchChange}
               ></input>
             </form>
           </div>
@@ -52,13 +76,13 @@ const Header = (props: Props) => {
             onClick={handleClose}
           >
             <MenuItem>
-              <FavoriteBorder /> Likes
+              <FavoriteBorder className="mr-2" /> Likes
             </MenuItem>
             <MenuItem>
-              <Settings /> Settings
+              <Settings className="mr-2" /> Settings
             </MenuItem>
             <MenuItem>
-              <Logout /> Logout
+              <Logout className="mr-2" /> Logout
             </MenuItem>
           </Menu>
         </div>
