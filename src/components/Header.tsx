@@ -9,7 +9,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
 import { Button, IconButton, Menu, MenuItem } from "@mui/material";
-import { FavoriteBorder, Logout, Settings } from "@mui/icons-material";
+import {
+  BookmarkBorder,
+  FavoriteBorder,
+  Logout,
+  Settings,
+  Visibility,
+} from "@mui/icons-material";
 import { useRouter } from "next/router";
 
 type Props = {};
@@ -65,8 +71,11 @@ const Header = (props: Props) => {
           </div>
 
           <div className={style.menu}>
+            <IconButton>
+              <Visibility color="secondary" className="w-7 h-7" />
+            </IconButton>
             <IconButton onClick={handleClick}>
-              <PersonIcon />
+              <PersonIcon className="w-7 h-7" />
             </IconButton>
           </div>
           <Menu
@@ -77,6 +86,9 @@ const Header = (props: Props) => {
           >
             <MenuItem>
               <FavoriteBorder className="mr-2" /> Likes
+            </MenuItem>
+            <MenuItem>
+              <BookmarkBorder className="mr-2" /> Bookmarks
             </MenuItem>
             <MenuItem>
               <Settings className="mr-2" /> Settings

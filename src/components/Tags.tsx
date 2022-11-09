@@ -1,4 +1,3 @@
-import { GetServerSideProps } from "next";
 import { MouseEvent } from "react";
 import { Chip } from "@mui/material";
 
@@ -35,6 +34,7 @@ function Tags({ tags, currentTag }: Props) {
             color="secondary"
             variant="outlined"
             onClick={onClick}
+            key={tag.slice(1)}
           />
         );
       })}

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { getCookie } from "cookies-next";
 import { OptionsType } from "cookies-next/lib/types";
 
-export function verifyToken(token: string): any {
+function verifyToken(token: string): any {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
     return decoded;
@@ -30,6 +30,6 @@ export function verifyLogin(options: OptionsType) {
 
   return {
     status: "ok",
-    token: verifiedToken
+    token: verifiedToken,
   };
 }
