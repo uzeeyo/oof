@@ -33,7 +33,7 @@ model PostTag {
   id                String        @id @default(cuid())
   postId            String
   tagId             String
-  post              Post          @relation(fields: [postId], references: [id])
+  post              Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
   tag               Tag           @relation(fields: [tagId], references: [id])
 
 }
