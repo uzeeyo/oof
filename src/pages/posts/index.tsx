@@ -25,6 +25,10 @@ function index({ posts, tags, currentTag }: Props) {
     setCurrentPosts([newPost, ...currentPosts]);
   }
 
+  function deletePost(postId: string) {
+    setCurrentPosts(currentPosts.filter((p) => p.id !== postId));
+  }
+
   return (
     <>
       <Meta title="oof - Posts" description="Browse the latest posts." />
@@ -32,12 +36,12 @@ function index({ posts, tags, currentTag }: Props) {
       <div className="flex flex-col p20">
         <Tags tags={tags} currentTag={currentTag} />
         <PostBuilder addPost={addPost} />
-        <div className="grid grid-cols-4">
+        <div className="">
           <div
-            className={`flex flex-col flex-grow flex-align flex-gap p20 col-start-2 col-span-2 max-w-[35rem] m-auto`}
+            className={`flex flex-col flex-grow flex-align flex-gap p20 max-w-[35rem] m-auto`}
           >
             {currentPosts.map((post) => (
-              <Secret secret={post} key={post.id} />
+              <Secret secret={post} key={post.id} deletePost={deletePost} />
             ))}
           </div>
         </div>
