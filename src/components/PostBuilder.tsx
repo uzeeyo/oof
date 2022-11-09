@@ -1,12 +1,12 @@
-import { Image, Videocam } from "@mui/icons-material";
+import { Close, Image, Videocam } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import React, {
   ChangeEvent,
+  FormEvent,
   FormEventHandler,
-  SetStateAction,
+  useEffect,
   useState,
 } from "react";
-import IPost from "../lib/types/IPost";
 
 type Props = {
   addPost: Function;
@@ -14,6 +14,8 @@ type Props = {
 
 export default function ({ addPost }: Props) {
   const [text, setText] = useState("");
+  const [image, setImage] = useState<File>();
+  const [imageUrl, setImageUrl] = useState("");
   const [errHidden, setErrHidden] = useState(true);
 
   const onTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -21,21 +23,34 @@ export default function ({ addPost }: Props) {
     if (!errHidden) setErrHidden(true);
   };
 
+  //FOR: Image upload
+  const onSelectedImageChange = (e: FormEvent<HTMLInputElement>) => {
+    if (e.currentTarget.files) {
+      setImage(e.currentTarget.files[0]);
+    }
+  };
+
+  useEffect(() => {
+    image ? setImageUrl(URL.createObjectURL(image)) : setImageUrl("");
+  }, [image]);
+
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const req = {
-      text: text,
-    };
+
+    const formData = new FormData();
+    formData.append("text", text);
+    if (image) {
+      formData.append("image", image);
+    }
+
     const res = await fetch("http://localhost:3000/api/posts", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(req),
+      body: formData,
     });
 
     if (res.ok) {
       setText("");
+      setImage(undefined);
       addPost(await res.json());
     } else {
       setErrHidden(false);
@@ -45,20 +60,31 @@ export default function ({ addPost }: Props) {
   return (
     <div className="flex justify-center p-5 ">
       <form style={{ width: "40rem" }} onSubmit={onSubmit}>
-        <div className="p-5 border-gray-400 border-2 rounded-lg flex flex-col">
+        <div className="p-5 border-gray-400 border-2 rounded-lg flex flex-col items-center">
+          {image && (
+            <div className="relative mb-5">
+              <Close
+                className="absolute top-2 right-2 cursor-pointer rounded-full bg-white bg-opacity-30 p-1 hover:bg-green-500 hover:text-white"
+                color="primary"
+                onClick={() => setImage(undefined)}
+              />
+              <img src={imageUrl} className="h-[400px]" />
+            </div>
+          )}
           <textarea
             rows={3}
             maxLength={400}
-            className="resize-none p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500"
+            className="resize-none p-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 bg-transparent text-slate-100"
             value={text}
             onChange={onTextChange}
           />
-          <div className="flex flex-row mt-2 items-center">
+          <div className="flex flex-row mt-2 items-center w-full">
             <input
               type="file"
               accept="image/*"
               hidden={true}
               id="image_upload"
+              onChange={onSelectedImageChange}
             />
             <input
               type="file"
