@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from "next";
-import { verifyToken } from "../lib/auth";
+import { verifyLogin } from "../lib/auth";
 
 import { getCookie } from "cookies-next";
 import LoginForm from "../components/LoginForm";
@@ -17,10 +17,8 @@ const Home = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const token = getCookie("access-token", { req, res });
-  if (!token) return { props: {} };
-  const loggedIn = verifyToken(token?.valueOf().toString()!);
-  if (loggedIn) {
+  const loggedIn = verifyLogin({ req, res });
+  if (loggedIn.status === "ok") {
     return {
       redirect: {
         destination: "/posts",

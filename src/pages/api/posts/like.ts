@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verifyLogin } from "../../../lib/auth";
-import prisma from "../_config";
+import prisma from "../../../../prisma/_config";
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,11 +15,11 @@ export default async function handler(
     }
 
     //Check if valid params
-    if (!(req.body.liked) || !(req.body.postId)) {
+    if (!(req.body.liked || req.body.postId)) {
       return res.status(400).send("Invalid parameters.");
     }
 
-    try { 
+    try {
       if (req.body.liked == true) {
         await prisma.like.create({
           data: {
