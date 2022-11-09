@@ -1,10 +1,9 @@
-import prisma from "../pages/api/_config";
+import prisma from "../../prisma/_config";
 import { Tag } from "@prisma/client";
 
 export const tagRegex = /(#[a-zA-Z0-9_\-]{1,})/g;
 
 export function findTags(words: string): Array<string> {
-
   const w = words.match(tagRegex);
 
   return Array.from(new Set(w));

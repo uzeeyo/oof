@@ -1,4 +1,4 @@
-import prisma from "../_config";
+import prisma from "../../../../prisma/_config";
 import { NextApiRequest, NextApiResponse } from "next";
 import * as bcrypt from "bcryptjs";
 

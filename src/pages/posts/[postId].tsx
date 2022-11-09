@@ -3,7 +3,7 @@ import Secret from "../../components/Secret";
 import { verifyLogin } from "../../lib/auth";
 import IPost from "../../lib/types/IPost";
 import { convertLikes } from "../api/posts";
-import prisma from "../api/_config";
+import prisma from "../../../prisma/_config";
 
 interface Props {
   post: IPost;
@@ -13,7 +13,7 @@ export default function ({ post }: Props) {
   return (
     <div className="mr-auto ml-auto">
       <div className="mt-20">
-        <Secret secret={post} key={post.id} />
+        <Secret secret={post} />
       </div>
     </div>
   );
