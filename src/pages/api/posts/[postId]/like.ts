@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { verifyLogin } from "../../../lib/auth";
-import prisma from "../../../../prisma/_config";
+import { verifyLogin } from "../../../../lib/auth";
+import prisma from "../../../../../prisma/_config";
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,7 +15,7 @@ export default async function handler(
     }
 
     //Check if valid params
-    if (!(req.body.liked || req.body.postId)) {
+    if (!req.body.liked == undefined) {
       return res.status(400).send("Invalid parameters.");
     }
 
@@ -24,7 +24,7 @@ export default async function handler(
         await prisma.like.create({
           data: {
             userId: verified.token.userId,
-            postId: req.body.postId,
+            postId: req.query.postId as string,
             liked: true,
           },
         });
@@ -35,7 +35,7 @@ export default async function handler(
         await prisma.like.deleteMany({
           where: {
             userId: verified.token.userId,
-            postId: req.body.postId,
+            postId: req.query.postId as string,
           },
         });
         return res.status(200).send("Post unliked");
