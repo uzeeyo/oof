@@ -11,10 +11,8 @@ interface Props {
 
 export default function ({ post }: Props) {
   return (
-    <div className="mr-auto ml-auto">
-      <div className="mt-20">
-        <Secret secret={post} />
-      </div>
+    <div className="mr-auto ml-auto pb-20">
+      <Secret secret={post} />
     </div>
   );
 }
