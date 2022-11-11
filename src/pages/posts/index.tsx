@@ -6,19 +6,25 @@ import Secret from "../../components/Secret";
 import Tags from "../../components/Tags";
 import Meta from "../../components/Meta";
 import PostBuilder from "../../components/PostBuilder";
-import { getPosts } from "../api/posts";
-import { verifyLogin } from "../../lib/auth";
 
 type Props = {
-  posts: IPost[];
   tags: Array<string>;
   currentTag: string | null;
 };
 
-function Index({ posts, tags, currentTag }: Props) {
-  const [currentPosts, setCurrentPosts] = useState(posts);
+function Index({ tags, currentTag }: Props) {
+  const [currentPosts, setCurrentPosts] = useState<IPost[]>([]);
   useEffect(() => {
-    setCurrentPosts(posts);
+    fetch("/api/posts/get", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tag: currentTag, skip: 0 }),
+    })
+      .then((res) => res.json())
+      .then((data) => setCurrentPosts(data))
+      .catch((err) => console.log(err));
   }, [currentTag]);
 
   function addPost(newPost: IPost) {
@@ -70,17 +76,9 @@ export const getServerSideProps: GetServerSideProps = async ({
   ];
 
   const { tag } = query;
-  const verified = verifyLogin({ req, res });
-
-  const posts = await getPosts(
-    0,
-    tag as string,
-    verified.token?.userId || null
-  );
 
   return {
     props: {
-      posts: JSON.parse(JSON.stringify(posts)),
       tags,
       currentTag: tag || null,
     },
