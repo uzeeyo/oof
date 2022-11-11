@@ -12,7 +12,7 @@ type Props = {
   addPost: Function;
 };
 
-export default function ({ addPost }: Props) {
+const PostBuilder = ({ addPost }: Props) => {
   const [text, setText] = useState("");
   const [image, setImage] = useState<File>();
   const [imageUrl, setImageUrl] = useState("");
@@ -112,4 +112,6 @@ export default function ({ addPost }: Props) {
       </form>
     </div>
   );
-}
+};
+
+export default PostBuilder;

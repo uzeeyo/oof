@@ -15,7 +15,7 @@ type Props = {
   currentTag: string | null;
 };
 
-function index({ posts, tags, currentTag }: Props) {
+function Index({ posts, tags, currentTag }: Props) {
   const [currentPosts, setCurrentPosts] = useState(posts);
   useEffect(() => {
     setCurrentPosts(posts);
@@ -87,4 +87,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-export default index;
+export default Index;

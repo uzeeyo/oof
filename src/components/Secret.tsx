@@ -1,12 +1,6 @@
-import React, {
-  useState,
-  MouseEvent,
-  ChangeEvent,
-  FormEventHandler,
-  useEffect,
-} from "react";
+import React, { useState, MouseEvent, ChangeEvent } from "react";
 import style from "../styles/Secret.module.css";
-import { Checkbox, Divider, Menu, MenuItem } from "@mui/material/";
+import { Checkbox, Menu, MenuItem } from "@mui/material/";
 import {
   Favorite,
   FavoriteBorder,
@@ -14,7 +8,6 @@ import {
   BookmarkBorder,
   Bookmark,
   MoreHoriz,
-  Send,
 } from "@mui/icons-material/";
 import Link from "next/link";
 import IPost from "../lib/types/IPost";
@@ -28,6 +21,8 @@ type Props = {
 };
 
 const Secret = ({ secret, deletePost }: Props) => {
+  const router = useRouter();
+
   //FOR: Post menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -75,7 +70,6 @@ const Secret = ({ secret, deletePost }: Props) => {
       if (deletePost) {
         deletePost(secret.id);
       } else {
-        const router = useRouter();
         router.push("/posts");
       }
     } else {

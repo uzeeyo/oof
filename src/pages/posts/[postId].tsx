@@ -9,13 +9,13 @@ interface Props {
   post: IPost;
 }
 
-export default function ({ post }: Props) {
+const PostSingle = ({ post }: Props) => {
   return (
     <div className="mr-auto ml-auto pb-20">
       <Secret secret={post} />
     </div>
   );
-}
+};
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const postId = context.params!.postId;
@@ -71,3 +71,4 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     notFound: true,
   };
 };
+export default PostSingle;
