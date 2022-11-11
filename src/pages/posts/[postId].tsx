@@ -1,8 +1,8 @@
-import { GetServerSideProps, NextPage } from "next";
+import { GetServerSideProps } from "next";
 import Secret from "../../components/Secret";
 import { verifyLogin } from "../../lib/auth";
 import IPost from "../../lib/types/IPost";
-import { convertLikes } from "../api/posts";
+import { convertLikes } from "../api/posts/get";
 import prisma from "../../../prisma/_config";
 
 interface Props {
@@ -65,10 +65,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     props: {
       post: JSON.parse(JSON.stringify(filteredPost)),
     },
-  };
-
-  return {
-    notFound: true,
   };
 };
 export default PostSingle;
