@@ -36,14 +36,11 @@ function index({ posts, tags, currentTag }: Props) {
       <div className="flex flex-col p20">
         <Tags tags={tags} currentTag={currentTag} />
         <PostBuilder addPost={addPost} />
-        <div className="">
-          <div
-            className={`flex flex-col flex-grow flex-align flex-gap p20 max-w-[35rem] m-auto`}
-          >
-            {currentPosts.map((post) => (
-              <Secret secret={post} key={post.id} deletePost={deletePost} />
-            ))}
-          </div>
+
+        <div className={`flex flex-col flex-grow flex-gap p20 items-center`}>
+          {currentPosts.map((post) => (
+            <Secret secret={post} key={post.id} deletePost={deletePost} />
+          ))}
         </div>
       </div>
     </>

@@ -39,41 +39,47 @@ function LoginForm({}: Props) {
   };
 
   return (
-    <div className={`${styles.signinbox} flex flex-col`}>
-      <h2>Get started!</h2>
-      <div>
-        <form className="flex-col" onSubmit={onSubmit} method="POST">
-          <div className={styles.textbox}>
-            <Person />
-            <input
-              placeholder="Username"
-              required
-              type="text"
-              autoComplete="username"
-              name="username"
-              value={auth.username}
-              onChange={authHandler}
-            />
-          </div>
-          <div className={styles.textbox}>
-            <Key />
-            <input
-              placeholder="Password"
-              type="password"
-              autoComplete="current-password"
-              name="password"
-              required
-              value={auth.password}
-              onChange={authHandler}
-            />
-          </div>
-          <div className="flex flex-row flex-align flex-justify-end">
-            <p>Stay logged in?</p>
-            <Checkbox color="secondary" sx={{ color: "var(--pink)" }} />
-          </div>
-          <input type="submit" className="button-green p5" />
-        </form>
-      </div>
+    <div
+      className={`${styles.signinbox} flex flex-col pt-10 pl-20 pr-20 flex-1`}
+    >
+      <h1 className="text-xl mb-4">Get started!</h1>
+      <form className="flex flex-col" onSubmit={onSubmit}>
+        <div className="flex border-2 border-slate-400 rounded-3xl p-1 mb-2">
+          <Person htmlColor="#FFF" className="ml-1" />
+          <input
+            placeholder="Username"
+            required
+            type="text"
+            autoComplete="username"
+            name="username"
+            value={auth.username}
+            onChange={authHandler}
+            className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)] text-white"
+          />
+        </div>
+
+        <div className="flex border-2 border-slate-400 rounded-3xl p-1">
+          <Key htmlColor="#FFF" className="ml-1" />
+          <input
+            placeholder="Password"
+            type="password"
+            autoComplete="current-password"
+            name="password"
+            required
+            value={auth.password}
+            onChange={authHandler}
+            className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)] text-white"
+          />
+        </div>
+        <div className="flex flex-row items-center flex-justify-end">
+          <p>Stay logged in?</p>
+          <Checkbox color="secondary" sx={{ color: "var(--pink)" }} />
+        </div>
+        <input
+          type="submit"
+          className="bg-[color:var(--green)] rounded-3xl py-1 px-6 mx-auto cursor-pointer"
+        />
+      </form>
     </div>
   );
 }

@@ -53,7 +53,7 @@ const Header = (props: Props) => {
           <div className="p-2">
             <Link href="/" className="p-20">
               <a>
-                <img src="/images/logo.png" className="w-20" />
+                <img src="/images/logo.png" className="w-10 md:w-20" />
               </a>
             </Link>
           </div>
@@ -62,7 +62,7 @@ const Header = (props: Props) => {
             <SearchIcon htmlColor="white" color="primary" />
             <form onSubmit={onSubmit}>
               <input
-                className="bg-slate-50 focus:outline-none w-80"
+                className="bg-slate-50 focus:outline-none md:w-80"
                 placeholder="Search tags..."
                 value={searchQuery}
                 onChange={onSearchChange}
@@ -70,7 +70,7 @@ const Header = (props: Props) => {
             </form>
           </div>
 
-          <div className={style.menu}>
+          <div className="">
             <IconButton>
               <Visibility color="secondary" className="w-7 h-7" />
             </IconButton>
@@ -78,6 +78,7 @@ const Header = (props: Props) => {
               <PersonIcon className="w-7 h-7" />
             </IconButton>
           </div>
+
           <Menu
             anchorEl={anchorEl}
             open={open}

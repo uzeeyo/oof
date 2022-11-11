@@ -58,9 +58,9 @@ export default function ({ addPost }: Props) {
   };
 
   return (
-    <div className="flex justify-center p-5 ">
+    <div className="flex justify-center mt-5">
       <form style={{ width: "40rem" }} onSubmit={onSubmit}>
-        <div className="p-5 border-gray-400 border-2 rounded-lg flex flex-col items-center">
+        <div className=" p-2 md:p-3 border-gray-400 border-2 rounded-lg flex flex-col items-center">
           {image && (
             <div className="relative mb-5">
               <Close
@@ -99,9 +99,9 @@ export default function ({ addPost }: Props) {
               <Videocam className="h-8 w-8" color="secondary" />
             </label>
 
-            <div className="ml-auto mr-4 flex flex-row items-center">
+            <div className="ml-auto mr-2 md:mr-4 flex flex-row items-center">
               <p className="text-red-500 text mr-2" hidden={errHidden}>
-                <b>There was an error posting.</b>
+                <b>Error</b>
               </p>
               <Button variant="outlined" type="submit">
                 Post

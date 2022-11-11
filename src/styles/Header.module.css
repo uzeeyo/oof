@@ -4,12 +4,6 @@
   z-index: 1;
 }
 
-.menu {
-  margin-right: 1em;
-  display: flex;
-  align-items: center;
-}
-
 /* .searchbar {
   padding: 0 5px;
   background-color: var(--darkgray);

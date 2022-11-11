@@ -10,11 +10,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   return (
     <Layout>
       <ThemeProvider theme={theme}>
-        <div className="flex flex-col h-max relative w-screen bg-[#030D02]">
+        <div className="flex flex-col min-h-screen relative bg-[#010902]">
           <Header />
-          <div className="ml-32 mr-32 bg-black bg-opacity-70">
-            <Component {...pageProps} />
-          </div>
+          <Component {...pageProps} />
         </div>
       </ThemeProvider>
     </Layout>
