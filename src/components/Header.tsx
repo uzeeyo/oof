@@ -46,6 +46,14 @@ const Header = (props: Props) => {
     }
   };
 
+  const onLogoutClick = (e: MouseEvent<HTMLElement>) => {
+    fetch("/api/auth/logout", { method: "POST" }).then((res) => {
+      if (res.ok) {
+        router.push("/")
+      }
+    });
+  };
+
   return (
     <header className={style.Header}>
       <div>
@@ -94,8 +102,8 @@ const Header = (props: Props) => {
             <MenuItem>
               <Settings className="mr-2" /> Settings
             </MenuItem>
-            <MenuItem>
-              <Logout className="mr-2" /> Logout
+            <MenuItem onClick={onLogoutClick}>
+              <Logout className="mr-2"/> Logout
             </MenuItem>
           </Menu>
         </div>
