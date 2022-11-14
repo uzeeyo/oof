@@ -62,7 +62,7 @@ const Secret = ({ secret, deletePost }: Props) => {
   //FOR: Delete button
   const handleDeletePost = async () => {
     const res = await fetch(
-      `http://localhost:3000/api/posts/${secret.id}/delete`,
+      `/api/posts/${secret.id}/delete`,
       {
         method: "DELETE",
       }

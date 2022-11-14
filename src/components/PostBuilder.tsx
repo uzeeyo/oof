@@ -43,7 +43,7 @@ const PostBuilder = ({ addPost }: Props) => {
       formData.append("image", image);
     }
 
-    const res = await fetch("http://localhost:3000/api/posts/create", {
+    const res = await fetch("/api/posts/create", {
       method: "POST",
       body: formData,
     });
