@@ -14,6 +14,7 @@ import IPost from "../lib/types/IPost";
 import { useRouter } from "next/dist/client/router";
 import moment from "moment";
 import Comments from "./Comments";
+import { useUpdateEffect } from "react-use";
 
 type Props = {
   secret: IPost;
@@ -39,23 +40,24 @@ const Secret = ({ secret, deletePost }: Props) => {
 
   const onLikeChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setLiked(e.target.checked);
-    const res = await fetch(
-      `http://localhost:3000/api/posts/${secret.id}/like`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ liked }),
-      }
-    );
-    if (res.ok) {
-      if (res.status === 201 && Number(likeCount) < 999)
-        setLikeCount((Number(likeCount) + 1).toString());
-      if (res.status === 200 && Number(likeCount) < 999)
-        setLikeCount((Number(likeCount) - 1).toString());
-    }
   };
+
+  useUpdateEffect(() => {
+    fetch(`/api/posts/${secret.id}/like`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ liked }),
+    }).then((res) => {
+      if (res.ok) {
+        if (res.status === 201 && Number(likeCount) < 999)
+          setLikeCount((Number(likeCount) + 1).toString());
+        if (res.status === 200 && Number(likeCount) < 999)
+          setLikeCount((Number(likeCount) - 1).toString());
+      }
+    });
+  }, [liked]);
 
   //FOR: Delete button
   const handleDeletePost = async () => {

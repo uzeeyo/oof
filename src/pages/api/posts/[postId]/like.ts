@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { verifyLogin } from "../../../../lib/auth";
 import prisma from "../../../../../prisma/_config";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,13 +11,12 @@ export default async function handler(
     //Check cookie and verify jwt
     const verified = verifyLogin({ req, res });
     if (verified.err) {
-      console.log(verified);
-      return res.status(verified.err).send(verified);
+      return res.status(verified.err).end();
     }
 
     //Check if valid params
     if (!req.body.liked == undefined) {
-      return res.status(400).send("Invalid parameters.");
+      return res.status(400).send({ error: "Invalid parameters." });
     }
 
     try {
@@ -29,7 +29,7 @@ export default async function handler(
           },
         });
 
-        return res.status(201).send("Post liked");
+        return res.status(201).send({ liked: true });
       }
       if (req.body.liked == false) {
         await prisma.like.deleteMany({
@@ -38,13 +38,16 @@ export default async function handler(
             postId: req.query.postId as string,
           },
         });
-        return res.status(200).send("Post unliked");
+        return res.status(200).send({ liked: false });
       }
     } catch (err) {
+      if (err instanceof PrismaClientKnownRequestError) {
+        return res.status(409).end();
+      }
       console.log(err);
-      return res.status(500);
+      return res.status(500).end();
     }
   } else {
-    return res.status(400).send("Invalid request");
+    return res.status(400).send({ error: "Invalid request method" });
   }
 }
