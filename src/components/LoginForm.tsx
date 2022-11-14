@@ -1,5 +1,5 @@
 import { Person, Key } from "@mui/icons-material";
-import { Checkbox } from "@mui/material";
+import { Button, Checkbox } from "@mui/material";
 import { useRouter } from "next/router";
 
 import React, { ChangeEvent, FormEventHandler, useState } from "react";
@@ -75,10 +75,19 @@ function LoginForm({}: Props) {
           <p>Stay logged in?</p>
           <Checkbox color="secondary" sx={{ color: "var(--pink)" }} />
         </div>
-        <input
-          type="submit"
-          className="bg-[color:var(--green)] rounded-3xl py-1 px-6 mx-auto cursor-pointer"
-        />
+        <div className="mx-auto">
+          <Button
+            type="submit"
+            variant="outlined"
+            color="primary"
+            className="mr-2"
+          >
+            Sign In
+          </Button>
+          <Button variant="outlined" color="secondary" href="/register">
+            Register
+          </Button>
+        </div>
       </form>
     </div>
   );

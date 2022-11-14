@@ -72,6 +72,7 @@ model User {
   likes             Like[]
   reports           Report[]
   settings          UserSettings?
+  @@unique([username, email], map: "username_email")
 }
 
 model UserSettings {

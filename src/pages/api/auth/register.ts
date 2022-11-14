@@ -1,35 +1,70 @@
 import prisma from "../../../../prisma/_config";
 import { NextApiRequest, NextApiResponse } from "next";
 import * as bcrypt from "bcryptjs";
+import { sign } from "jsonwebtoken";
+import moment from "moment";
+import { userSchema } from "../../../lib/validationSchemas";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == "POST") {
     const { username, password, email } = req.body;
-    if (password.length < 6) return res.status(400).send("Invalid password.");
+
+    //Check if data conforms to schema
+    try {
+      userSchema.parse({ username, password, email });
+    } catch {
+      return res.status(422).end();
+    }
+
     bcrypt.hash(password, 10, async (err, hash) => {
       try {
-        const exists = await prisma.user.findMany({
+        const user = await prisma.user.upsert({
           where: {
-            username: username,
+            username_email: {
+              username,
+              email,
+            },
           },
-        });
-
-        if (exists) return res.status(400).send("User already exists.");
-
-        const user = await prisma.user.create({
-          data: {
+          update: {},
+          create: {
             username: username,
             password: hash,
             email: email || null,
           },
         });
-        return res.status(201).send(`User ${username} created.`);
-      } catch {
-        return res.status(500).send("A problem has occured.");
+
+        console.log(user);
+
+        const token = sign(
+          {
+            exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7,
+            userId: user.id,
+            username: user.username,
+          },
+          process.env.JWT_SECRET!
+        );
+
+        return res
+          .status(201)
+          .setHeader(
+            "Set-Cookie",
+            `access-token=${token}; HttpOnly; Path=/; Expires=${moment().add(
+              3,
+              "days"
+            )}`
+          )
+          .end();
+      } catch (err) {
+        if (err instanceof PrismaClientKnownRequestError) {
+          const errorField = err.meta!.target as any;
+          return res.status(409).send({ alreadyExists: errorField[0] });
+        }
+        return res.status(500).end();
       }
     });
   } else {
-    return res.status(405).send("Invalid request method.");
+    return res.status(405).end();
   }
 };
 
