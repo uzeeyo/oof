@@ -14,10 +14,12 @@ const Register: NextPage<Props> = ({}) => {
     password: "",
   });
   const [errorHidden, setErrorHidden] = useState(true);
+  const [internalErrorHidden, setInternalErrorHidden] = useState(true);
 
   const onFormChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.currentTarget.name]: e.currentTarget.value });
     if (!errorHidden) setErrorHidden(true);
+    if (!internalErrorHidden) setInternalErrorHidden(true);
   };
 
   const onFormSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
@@ -31,8 +33,10 @@ const Register: NextPage<Props> = ({}) => {
     }).then((res) => {
       if (res.ok) {
         router.push("/posts");
-      } else {
+      } else if (res.status === 409) {
         setErrorHidden(false);
+      } else {
+        setInternalErrorHidden(false);
       }
     });
   };
@@ -83,6 +87,10 @@ const Register: NextPage<Props> = ({}) => {
               className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)] text-white w-full"
             />
           </div>
+
+          <p hidden={internalErrorHidden} className="text-red-600 mx-auto">
+            Internal error.
+          </p>
 
           <p hidden={errorHidden} className="text-red-600 mx-auto">
             User already exists.
