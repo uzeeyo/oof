@@ -1,9 +1,7 @@
 import formidable from "formidable";
 import { NextApiRequest } from "next";
-import moment from "moment";
 import fs from "fs";
-import path from "path";
-import { FormatListNumbered } from "@mui/icons-material";
+import { s3Upload } from "./s3";
 
 export const parse = async (
   req: NextApiRequest
@@ -11,19 +9,8 @@ export const parse = async (
   body: formidable.Fields;
   pathName?: string;
 }> => {
-  const relDirectory = "/media/" + moment().format("YYYYMMDD");
-  const imageDirectory = path.join(process.cwd(), "/public", relDirectory);
-
-  try {
-    await fs.promises.readdir(imageDirectory);
-  } catch (err) {
-    await fs.promises.mkdir(imageDirectory);
-    console.error(err);
-  }
-
   let filename = "";
   const options: formidable.Options = {
-    uploadDir: imageDirectory,
     filename: (name, ext, part, form) => {
       filename =
         Date.now().toString() +
@@ -43,15 +30,25 @@ export const parse = async (
   const form = formidable(options);
 
   return new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
+    form.parse(req, async (err, fields, files) => {
       if (err) reject(err);
-      console.log(files);
+
+      if (!Array.isArray(files.image) && files.image) {
+        const s3Path = await s3Upload(
+          files.image.newFilename,
+          fs.createReadStream(files.image.filepath)
+        );
+        fs.unlink(files.image.filepath, () => {});
+
+        resolve({
+          body: fields,
+          pathName: s3Path,
+        });
+      }
+
       resolve({
         body: fields,
-        pathName:
-          Object.keys(files).length !== 0
-            ? relDirectory.concat("/", filename)
-            : undefined,
+        pathName: undefined,
       });
     });
   });
