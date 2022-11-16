@@ -1,5 +1,5 @@
 import { Close, Image, Videocam } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import React, {
   ChangeEvent,
   FormEvent,
@@ -17,6 +17,7 @@ const PostBuilder = ({ addPost }: Props) => {
   const [image, setImage] = useState<File>();
   const [imageUrl, setImageUrl] = useState("");
   const [errHidden, setErrHidden] = useState(true);
+  const [loadingHidden, setLoadingHidden] = useState(true);
 
   const onTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.currentTarget.value);
@@ -36,6 +37,7 @@ const PostBuilder = ({ addPost }: Props) => {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    setLoadingHidden(false);
 
     const formData = new FormData();
     formData.append("text", text);
@@ -47,6 +49,7 @@ const PostBuilder = ({ addPost }: Props) => {
       method: "POST",
       body: formData,
     });
+    setLoadingHidden(true);
 
     if (res.ok) {
       setText("");
@@ -103,6 +106,7 @@ const PostBuilder = ({ addPost }: Props) => {
               <p className="text-red-500 text mr-2" hidden={errHidden}>
                 <b>Error</b>
               </p>
+              <CircularProgress className="mr-2 p-2" hidden={loadingHidden} />
               <Button variant="outlined" type="submit">
                 Post
               </Button>
