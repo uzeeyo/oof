@@ -1,11 +1,9 @@
 import { Person, Key } from "@mui/icons-material";
 import { Button, Checkbox } from "@mui/material";
-import { useRouter } from "next/router";
 
 import React, { ChangeEvent, FormEventHandler, useState } from "react";
 import { useAuth } from "../lib/AuthProvider";
 
-import styles from "../styles/index.module.css";
 
 type Props = {};
 
@@ -29,7 +27,7 @@ function LoginForm({}: Props) {
 
   return (
     <div
-      className={`${styles.signinbox} flex flex-col pt-10 pl-20 pr-20 flex-1`}
+      className="flex flex-col pt-10 pl-20 pr-20 flex-1 bg-black items-center"
     >
       <h1 className="text-xl mb-4">Get started!</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
