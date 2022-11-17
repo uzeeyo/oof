@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useAuth } from "../lib/AuthProvider";
 
 type Props = {
   addPost: Function;
@@ -16,12 +17,12 @@ const PostBuilder = ({ addPost }: Props) => {
   const [text, setText] = useState("");
   const [image, setImage] = useState<File>();
   const [imageUrl, setImageUrl] = useState("");
-  const [errHidden, setErrHidden] = useState(true);
-  const [loadingHidden, setLoadingHidden] = useState(true);
+  const [errorVisible, setErrorVisible] = useState(false);
+  const [loadingVisible, setLoadingVisible] = useState(false);
 
   const onTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setText(e.currentTarget.value);
-    if (!errHidden) setErrHidden(true);
+    if (errorVisible) setErrorVisible(false);
   };
 
   //FOR: Image upload
@@ -37,7 +38,7 @@ const PostBuilder = ({ addPost }: Props) => {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    setLoadingHidden(false);
+    setLoadingVisible(true);
 
     const formData = new FormData();
     formData.append("text", text);
@@ -49,14 +50,14 @@ const PostBuilder = ({ addPost }: Props) => {
       method: "POST",
       body: formData,
     });
-    setLoadingHidden(true);
+    setLoadingVisible(false);
 
     if (res.ok) {
       setText("");
       setImage(undefined);
       addPost(await res.json());
     } else {
-      setErrHidden(false);
+      setErrorVisible(true);
     }
   };
 
@@ -103,11 +104,12 @@ const PostBuilder = ({ addPost }: Props) => {
             </label>
 
             <div className="ml-auto mr-2 md:mr-4 flex flex-row items-center">
-              <p className="text-red-500 text mr-2" hidden={errHidden}>
-                <b>Error</b>
-              </p>
-              <CircularProgress className="mr-2 p-2" hidden={loadingHidden} />
-              <Button variant="outlined" type="submit">
+              {errorVisible && <b className="text-red-500 text mr-2">Error</b>}
+              {loadingVisible && <CircularProgress className="mr-2 p-2" />}
+              <Button
+                variant="outlined"
+                type="submit"
+              >
                 Post
               </Button>
             </div>

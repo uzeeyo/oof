@@ -40,10 +40,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               "days"
             )}`
           )
-          .end();
+          .send({userId: user.id})
       } else {
         //If usernamae/password is wrong
-        return res.status(400).send("Username or password incorrect.");
+        return res.status(400).end();
       }
     } catch (err) {
       //Connection errors

@@ -15,6 +15,7 @@ import { useRouter } from "next/dist/client/router";
 import moment from "moment";
 import Comments from "./Comments";
 import { useUpdateEffect } from "react-use";
+import { useAuth } from "../lib/AuthProvider";
 
 type Props = {
   secret: IPost;
@@ -23,6 +24,7 @@ type Props = {
 
 const Secret = ({ secret, deletePost }: Props) => {
   const router = useRouter();
+  const { userId } = useAuth();
 
   //FOR: Post menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -61,12 +63,9 @@ const Secret = ({ secret, deletePost }: Props) => {
 
   //FOR: Delete button
   const handleDeletePost = async () => {
-    const res = await fetch(
-      `/api/posts/${secret.id}/delete`,
-      {
-        method: "DELETE",
-      }
-    );
+    const res = await fetch(`/api/posts/${secret.id}/delete`, {
+      method: "DELETE",
+    });
 
     if (res.ok) {
       if (deletePost) {
@@ -175,6 +174,7 @@ const Secret = ({ secret, deletePost }: Props) => {
           icon={<BookmarkBorder htmlColor="#BBB" />}
           checkedIcon={<Bookmark color="primary" />}
           className={style["secret-menu-item"]}
+          disabled={userId ? false : true}
         />
 
         <label
@@ -191,6 +191,7 @@ const Secret = ({ secret, deletePost }: Props) => {
           className={`${style["secret-menu-item"]}`}
           checked={liked}
           onChange={onLikeChange}
+          disabled={userId ? false : true}
         />
       </div>
 

@@ -3,6 +3,7 @@ import { Button, Checkbox } from "@mui/material";
 import { useRouter } from "next/router";
 
 import React, { ChangeEvent, FormEventHandler, useState } from "react";
+import { useAuth } from "../lib/AuthProvider";
 
 import styles from "../styles/index.module.css";
 
@@ -13,8 +14,7 @@ function LoginForm({}: Props) {
     username: "",
     password: "",
   });
-  const router = useRouter();
-
+  const { logIn, loginError } = useAuth();
   const authHandler = (e: ChangeEvent<HTMLInputElement>) => {
     setAuth({
       ...auth,
@@ -24,18 +24,7 @@ function LoginForm({}: Props) {
 
   const onSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const data = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(auth),
-    });
-    if (data.ok) {
-      router.push("/posts");
-    } else {
-      alert("Username or password is incorrect.");
-    }
+    await logIn(auth);
   };
 
   return (
@@ -71,7 +60,7 @@ function LoginForm({}: Props) {
             className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)] text-white"
           />
         </div>
-        <div className="flex flex-row items-center flex-justify-end">
+        <div className="flex flex-row items-center flex-justify-end my-2">
           <p>Stay logged in?</p>
           <Checkbox color="secondary" sx={{ color: "var(--pink)" }} />
         </div>
@@ -88,6 +77,9 @@ function LoginForm({}: Props) {
             Register
           </Button>
         </div>
+        {loginError && (
+          <b className="text-red-600 mt-2">Username or password incorrect.</b>
+        )}
       </form>
     </div>
   );

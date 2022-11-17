@@ -6,6 +6,8 @@ import Secret from "../../components/Secret";
 import Tags from "../../components/Tags";
 import Meta from "../../components/Meta";
 import PostBuilder from "../../components/PostBuilder";
+import { verifyLogin } from "../../lib/auth";
+import { useAuth } from "../../lib/AuthProvider";
 
 type Props = {
   tags: Array<string>;
@@ -14,6 +16,8 @@ type Props = {
 
 function Index({ tags, currentTag }: Props) {
   const [currentPosts, setCurrentPosts] = useState<IPost[]>([]);
+  const { userId } = useAuth();
+
   useEffect(() => {
     fetch("/api/posts/get", {
       method: "POST",
@@ -41,7 +45,7 @@ function Index({ tags, currentTag }: Props) {
 
       <div className="flex flex-col p20">
         <Tags tags={tags} currentTag={currentTag} />
-        <PostBuilder addPost={addPost} />
+        {userId && <PostBuilder addPost={addPost} />}
 
         <div className={`flex flex-col flex-grow flex-gap p20 items-center`}>
           {currentPosts.map((post) => (

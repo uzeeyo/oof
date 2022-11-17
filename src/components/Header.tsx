@@ -8,7 +8,7 @@ import style from "../styles/Header.module.css";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
-import { Button, IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import {
   BookmarkBorder,
   FavoriteBorder,
@@ -17,6 +17,7 @@ import {
   Visibility,
 } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import { useAuth } from "../lib/AuthProvider";
 
 type Props = {};
 
@@ -30,6 +31,7 @@ const Header = (props: Props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const { logOut } = useAuth();
 
   //FOR: Tag Search
   const router = useRouter();
@@ -44,14 +46,6 @@ const Header = (props: Props) => {
     } else {
       router.push("/posts");
     }
-  };
-
-  const onLogoutClick = (e: MouseEvent<HTMLElement>) => {
-    fetch("/api/auth/logout", { method: "POST" }).then((res) => {
-      if (res.ok) {
-        router.push("/")
-      }
-    });
   };
 
   return (
@@ -102,8 +96,8 @@ const Header = (props: Props) => {
             <MenuItem>
               <Settings className="mr-2" /> Settings
             </MenuItem>
-            <MenuItem onClick={onLogoutClick}>
-              <Logout className="mr-2"/> Logout
+            <MenuItem onClick={() => logOut()}>
+              <Logout className="mr-2" /> Logout
             </MenuItem>
           </Menu>
         </div>

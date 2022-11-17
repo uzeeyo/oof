@@ -5,6 +5,7 @@ import moment from "moment";
 import { Send } from "@mui/icons-material";
 import style from "../styles/Secret.module.css";
 import { useUpdateEffect } from "react-use";
+import { useAuth } from "../lib/AuthProvider";
 
 type Props = {
   postID: string;
@@ -12,6 +13,7 @@ type Props = {
 };
 
 const Comments = ({ postID, visibility }: Props) => {
+  const {userId} = useAuth();
   const [inputOpen, inputClosed] = [
     "border pb-1 pt-1 max-h-[50px]",
     "border-0 pb-0 pt-0 max-h-0",
