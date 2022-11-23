@@ -16,29 +16,29 @@ export default async function handler(
 
   if (req.method === "POST") {
     try {
-      settingsSchema.parse(req.body);
+      const settings = settingsSchema.parse(req.body);
       await prisma.userSettings.upsert({
         where: {
           userId: verified.token.userId,
         },
         update: {
-          darkMode: req.body.darkMode,
-          desktopNotify: req.body.desktopNotify,
-          mobileNotify: req.body.mobileNotify,
-          usernameVisibleOnPosts: req.body.usernameVisibleOnPosts,
-          usernameVisibleOnComments: req.body.usernameVisibleOnComments,
-          showPorn: req.body.showPorn,
-          showViolence: req.body.showViolence,
+          darkMode: settings.darkMode,
+          desktopNotify: settings.desktopNotify,
+          mobileNotify: settings.mobileNotify,
+          usernameVisibleOnPosts: settings.usernameVisibleOnPosts,
+          usernameVisibleOnComments: settings.usernameVisibleOnComments,
+          showPorn: settings.showPorn,
+          showViolence: settings.showViolence,
         },
         create: {
           userId: verified.token.userId,
-          darkMode: req.body.darkMode,
-          desktopNotify: req.body.desktopNotify,
-          mobileNotify: req.body.mobileNotify,
-          usernameVisibleOnPosts: req.body.usernameVisibleOnPosts,
-          usernameVisibleOnComments: req.body.usernameVisibleOnComments,
-          showPorn: req.body.showPorn,
-          showViolence: req.body.showViolence,
+          darkMode: settings.darkMode,
+          desktopNotify: settings.desktopNotify,
+          mobileNotify: settings.mobileNotify,
+          usernameVisibleOnPosts: settings.usernameVisibleOnPosts,
+          usernameVisibleOnComments: settings.usernameVisibleOnComments,
+          showPorn: settings.showPorn,
+          showViolence: settings.showViolence,
         },
       });
 
