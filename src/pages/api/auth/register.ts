@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import * as bcrypt from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import moment from "moment";
-import { userSchema } from "../../../lib/validationSchemas";
+import { registrationSchema } from "../../../lib/validationSchemas";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -12,7 +12,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     //Check if data conforms to schema
     try {
-      userSchema.parse({ username, password, email });
+      registrationSchema.parse({ username, password, email });
     } catch {
       return res.status(422).end();
     }

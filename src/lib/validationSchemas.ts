@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const userSchema = z.object({
+export const registrationSchema = z.object({
   username: z
     .string({ required_error: "Username is required." })
     .min(4, { message: "Username must be at least 4 characters long" }),
@@ -13,4 +13,24 @@ export const userSchema = z.object({
     .min(6),
 });
 
-export const postSchema = z.object({});
+export const postSchema = z.object({
+  text: z
+    .string({ required_error: "Username is required." })
+    .min(4, { message: "Username must be at least 4 characters long" }),
+});
+
+export const commentSchema = z.object({
+  text: z
+    .string({ required_error: "Username is required." })
+    .min(4, { message: "Username must be at least 4 characters long" }),
+});
+
+export const settingsSchema = z.object({
+  darkMode: z.boolean(),
+  desktopNotify: z.boolean(),
+  mobileNotify: z.boolean(),
+  usernameVisibleOnPosts: z.boolean(),
+  usernameVisibleOnComments: z.boolean(),
+  showPorn: z.boolean(),
+  showViolence: z.boolean(),
+});
