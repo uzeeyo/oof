@@ -24,7 +24,7 @@ type Props = {
 
 const Secret = ({ secret, deletePost }: Props) => {
   const router = useRouter();
-  const { userId } = useAuth();
+  const { isLoggedIn } = useAuth();
 
   //FOR: Post menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -174,7 +174,7 @@ const Secret = ({ secret, deletePost }: Props) => {
           icon={<BookmarkBorder htmlColor="#BBB" />}
           checkedIcon={<Bookmark color="primary" />}
           className={style["secret-menu-item"]}
-          disabled={userId ? false : true}
+          disabled={isLoggedIn ? false : true}
         />
 
         <label
@@ -191,7 +191,7 @@ const Secret = ({ secret, deletePost }: Props) => {
           className={`${style["secret-menu-item"]}`}
           checked={liked}
           onChange={onLikeChange}
-          disabled={userId ? false : true}
+          disabled={isLoggedIn ? false : true}
         />
       </div>
 

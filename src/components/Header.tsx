@@ -22,6 +22,8 @@ import { useAuth } from "../lib/AuthProvider";
 type Props = {};
 
 const Header = (props: Props) => {
+  const { isLoggedIn } = useAuth();
+
   //FOR: User menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -72,14 +74,15 @@ const Header = (props: Props) => {
             </form>
           </div>
 
-          <div className="">
-            <IconButton>
-              <Visibility color="secondary" className="w-7 h-7" />
-            </IconButton>
+          <IconButton>
+            <Visibility color="secondary" className="w-7 h-7" />
+          </IconButton>
+          
+          {isLoggedIn && (
             <IconButton onClick={handleClick}>
               <PersonIcon className="w-7 h-7" />
             </IconButton>
-          </div>
+          )}
 
           <Menu
             anchorEl={anchorEl}

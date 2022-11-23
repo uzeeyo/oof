@@ -8,17 +8,20 @@ import Meta from "../../components/Meta";
 import PostBuilder from "../../components/PostBuilder";
 import { verifyLogin } from "../../lib/auth";
 import { useAuth } from "../../lib/AuthProvider";
+import { getPosts } from "../api/posts/get";
+import { useUpdateEffect } from "react-use";
 
 type Props = {
   tags: Array<string>;
   currentTag: string | null;
+  posts: IPost[];
 };
 
-function Index({ tags, currentTag }: Props) {
-  const [currentPosts, setCurrentPosts] = useState<IPost[]>([]);
-  const { userId } = useAuth();
+function Index({ tags, currentTag, posts }: Props) {
+  const [currentPosts, setCurrentPosts] = useState<IPost[]>(posts);
+  const { isLoggedIn } = useAuth();
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     fetch("/api/posts/get", {
       method: "POST",
       headers: {
@@ -45,7 +48,7 @@ function Index({ tags, currentTag }: Props) {
 
       <div className="flex flex-col p20">
         <Tags tags={tags} currentTag={currentTag} />
-        {userId && <PostBuilder addPost={addPost} />}
+        {isLoggedIn && <PostBuilder addPost={addPost} />}
 
         <div className={`flex flex-col flex-grow flex-gap p20 items-center`}>
           {currentPosts.map((post) => (
@@ -78,13 +81,25 @@ export const getServerSideProps: GetServerSideProps = async ({
     "sad",
     "depression",
   ];
-
+  const verified = verifyLogin({ req, res });
+  let posts;
   const { tag } = query;
+
+  try {
+    if (verified.status === "err") {
+      posts = await getPosts(0, (tag as string) || null);
+    } else {
+      posts = await getPosts(0, (tag as string) || null, verified.token.userId);
+    }
+  } catch (err) {
+    console.log(err);
+  }
 
   return {
     props: {
       tags,
       currentTag: tag || null,
+      posts: JSON.parse(JSON.stringify(posts)),
     },
   };
 };

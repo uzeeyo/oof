@@ -13,7 +13,7 @@ type Props = {
 };
 
 const Comments = ({ postID, visibility }: Props) => {
-  const {userId} = useAuth();
+  const { isLoggedIn } = useAuth();
   const [inputOpen, inputClosed] = [
     "border pb-1 pt-1 max-h-[50px]",
     "border-0 pb-0 pt-0 max-h-0",
@@ -132,10 +132,10 @@ const Comments = ({ postID, visibility }: Props) => {
         </div>
       )}
 
-      <div
-        className={`flex flex-row w-full ${style[commentMode]} ${style["comments"]}`}
-      >
-        <div className={`flex flex-row p-2 w-full`}>
+      {isLoggedIn && (
+        <div
+          className={`flex flex-row w-full ${style[commentMode]} ${style["comments"]}`}
+        >
           <form className={`flex flex-row w-full items-center`}>
             <input
               type="text"
@@ -159,7 +159,7 @@ const Comments = ({ postID, visibility }: Props) => {
             </button>
           </form>
         </div>
-      </div>
+      )}
     </>
   );
 };

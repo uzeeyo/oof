@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useContext, createContext, useState } from "react";
+import { useContext, createContext, useState, useEffect } from "react";
 
 type User = {
   username: string;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 const AuthContext = createContext({
-  userId: null as string | null,
+  isLoggedIn: false,
   logIn: async ({ username, password }: User) => {},
   logOut: () => {},
   loginError: false,
@@ -22,9 +22,15 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: Props) => {
-  const [userId, setUserId] = useState<string | null>(null);
   const [loginError, setLoginError] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    console.log(userId);
+    if (userId) setIsLoggedIn(true);
+  }, []);
 
   const logIn = async ({ username, password }: User) => {
     setLoginError(false);
@@ -37,23 +43,25 @@ export const AuthProvider = ({ children }: Props) => {
     });
     if (res.ok) {
       const data = await res.json();
-      setUserId(data.userId)
+      localStorage.setItem("userId", data.userId);
+      setIsLoggedIn(true);
       router.push("/posts");
     } else {
-      setLoginError(true)
+      setLoginError(true);
     }
   };
 
   const logOut = () => {
     fetch("/api/auth/logout", { method: "POST" }).then((res) => {
       if (res.ok) {
-        setUserId(null)
+        localStorage.removeItem("userId");
+        setIsLoggedIn(false);
         router.push("/");
       }
     });
   };
 
-  const context = { userId, logIn, logOut, loginError };
+  const context = { isLoggedIn, logIn, logOut, loginError };
 
   return (
     <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
