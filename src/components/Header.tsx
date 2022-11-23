@@ -93,9 +93,11 @@ const Header = (props: Props) => {
             <MenuItem>
               <BookmarkBorder className="mr-2" /> Bookmarks
             </MenuItem>
-            <MenuItem>
-              <Settings className="mr-2" /> Settings
-            </MenuItem>
+            <Link href={"/settings"}>
+              <MenuItem>
+                <Settings className="mr-2" /> Settings
+              </MenuItem>
+            </Link>
             <MenuItem onClick={() => logOut()}>
               <Logout className="mr-2" /> Logout
             </MenuItem>

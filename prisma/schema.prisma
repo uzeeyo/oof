@@ -76,13 +76,15 @@ model User {
 }
 
 model UserSettings {
-  id                String        @id @default(cuid())
-  darkMode          Boolean       @default(false)
-  anonymous         Boolean       @default(true)
-  profilePic        String?
-  showPorn          Boolean       @default(false)
-  showViolence      Boolean       @default(false)
-  userId            String        @unique
+  id                        String        @id @default(cuid())
+  darkMode                  Boolean       @default(false)
+  desktopNotify             Boolean       @default(false)
+  mobileNotify              Boolean       @default(false)
+  usernameVisibleOnPosts    Boolean       @default(false)
+  usernameVisibleOnComments Boolean       @default(false)
+  showPorn                  Boolean       @default(false)
+  showViolence              Boolean       @default(false)
+  userId                    String        @unique
   user              User          @relation(fields: [userId], references: [id])
 }
 
