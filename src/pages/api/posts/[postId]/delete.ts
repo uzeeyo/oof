@@ -11,9 +11,9 @@ export default async function handler(
   if (req.method === "DELETE") {
     const postId = req.query.postId;
     const verified = verifyLogin({ req, res });
-    if (verified.err) {
+    if (verified.errCode) {
       console.log(verified);
-      return res.status(verified.err).send(verified);
+      return res.status(verified.errCode).send(verified);
     }
 
     try {

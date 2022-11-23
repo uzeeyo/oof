@@ -17,14 +17,14 @@ export function verifyLogin(options: OptionsType) {
   if (!token)
     return {
       status: "err",
-      err: 401,
+      errCode: 401,
       errText: "Not authenticated.",
     };
   const verifiedToken = verifyToken(token.valueOf() as string);
   if (!verifiedToken)
     return {
       status: "err",
-      err: 403,
+      errCode: 403,
       errText: "Unauthorized",
     };
 

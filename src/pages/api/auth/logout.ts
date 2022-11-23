@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     const loggedIn = verifyLogin({ req, res });
-    if (loggedIn.err) {
+    if (loggedIn.errCode) {
       return res.status(400).end();
     }
 

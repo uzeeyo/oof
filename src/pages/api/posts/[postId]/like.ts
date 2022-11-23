@@ -10,8 +10,8 @@ export default async function handler(
   if (req.method == "POST") {
     //Check cookie and verify jwt
     const verified = verifyLogin({ req, res });
-    if (verified.err) {
-      return res.status(verified.err).end();
+    if (verified.errCode) {
+      return res.status(verified.errCode).end();
     }
 
     //Check if valid params

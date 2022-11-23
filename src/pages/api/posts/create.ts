@@ -13,14 +13,14 @@ export default async function handler(
   if (req.method === "POST") {
     const verified = verifyLogin({ req, res });
     //Check cookie and verify jwt
-    if (verified.err) {
+    if (verified.errCode) {
       console.log(verified);
-      return res.status(verified.err).send(verified);
+      return res.status(verified.errCode).send(verified);
     }
 
-    const parsedData = await parse(req);
-
     try {
+      const parsedData = await parse(req);
+
       const p = await prisma.post.create({
         data: {
           userId: verified.token.userId,

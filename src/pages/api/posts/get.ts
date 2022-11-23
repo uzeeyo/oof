@@ -104,9 +104,8 @@ export async function getPosts(
       },
     });
   }
+
   return posts.map((post) => {
-    //DELETE
-    // console.log(post);
     let filteredPost: any = { ...post };
     delete filteredPost.likes;
     filteredPost.likeCount = convertLikes(filteredPost._count.likes);
