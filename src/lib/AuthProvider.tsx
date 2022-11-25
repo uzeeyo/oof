@@ -28,7 +28,6 @@ export const AuthProvider = ({ children }: Props) => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    console.log(userId);
     if (userId) setIsLoggedIn(true);
   }, []);
 
