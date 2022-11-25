@@ -4,7 +4,6 @@ import { Button, Checkbox } from "@mui/material";
 import React, { ChangeEvent, FormEventHandler, useState } from "react";
 import { useAuth } from "../lib/AuthProvider";
 
-
 type Props = {};
 
 function LoginForm({}: Props) {
@@ -26,9 +25,7 @@ function LoginForm({}: Props) {
   };
 
   return (
-    <div
-      className="flex flex-col pt-10 pl-20 pr-20 flex-1 bg-black items-center"
-    >
+    <div className="flex flex-col pt-10 pl-20 pr-20 flex-1 bg-black items-center">
       <h1 className="text-xl mb-4">Get started!</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <div className="flex border-2 border-slate-400 rounded-3xl p-1 mb-2">
@@ -67,7 +64,7 @@ function LoginForm({}: Props) {
             type="submit"
             variant="outlined"
             color="primary"
-            className="mr-2"
+            sx={{ marginRight: "0.5rem" }}
           >
             Sign In
           </Button>

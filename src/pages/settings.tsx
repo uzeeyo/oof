@@ -1,6 +1,8 @@
-import { Button, Divider, Menu, MenuItem, Switch } from "@mui/material";
+import { Button, Divider, Switch } from "@mui/material";
 import { GetServerSideProps, NextPage } from "next";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
+import Meta from "../components/Meta";
+import { Tailwind, useTheme } from "../lib/TailwindProvider";
 import { getSettings } from "./api/settings/get";
 
 interface Props {
@@ -18,11 +20,16 @@ interface Props {
 const Settings: NextPage<Props> = ({ settings }) => {
   const [settingsState, setSettingsState] = useState(settings);
   const [successfulVisible, setSuccessfulVisible] = useState(false);
+  const { setTheme } = useTheme();
 
   const onSettingsChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSuccessfulVisible(false);
     setSettingsState({ ...settingsState, [e.target.name]: e.target.checked });
   };
+
+  useEffect(() => {
+    setTheme(settingsState.darkMode ? Tailwind.DARK : Tailwind.LIGHT);
+  }, [settingsState.darkMode]);
 
   const settingsSubmit = () => {
     fetch("/api/settings/update", {
@@ -37,122 +44,125 @@ const Settings: NextPage<Props> = ({ settings }) => {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10 text-slate-300">
-      <div className="flex flex-col border border-slate-300 rounded-lg p10 md:w-96">
-        <div className="flex flex-row items-center">
-          <h2>Dark Mode</h2>
-          <Switch
-            className="ml-auto"
-            name="darkMode"
-            checked={settingsState.darkMode}
-            onChange={onSettingsChange}
-          />
-        </div>
-
-        <Divider className="my-2 bg-slate-300 bg-opacity-60" />
-
-        <div className="flex flex-row items-center">
-          <h2>Mobile Notifications</h2>
-          <Switch
-            className="ml-auto"
-            name="mobileNotify"
-            checked={settingsState.mobileNotify}
-            onChange={onSettingsChange}
-          />
-        </div>
-
-        <Divider className="my-2 bg-slate-300 bg-opacity-60" />
-
-        <div className="flex flex-row items-center">
-          <h2>Desktop Notifications</h2>
-          <Switch
-            className="ml-auto"
-            name="desktopNotify"
-            checked={settingsState.desktopNotify}
-            onChange={onSettingsChange}
-          />
-        </div>
-
-        <Divider className="my-2 bg-slate-300 bg-opacity-60" />
-
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center mb-2">
-            <b>Privacy:</b>
+    <>
+      <Meta title="oof - Settings" description="Browse the latest posts." />
+      <div className="flex flex-col items-center mt-10 dark:text-slate-300">
+        <div className="flex flex-col border border-slate-300 rounded-lg p10 md:w-96">
+          <div className="flex flex-row items-center">
+            <h2>Dark Mode</h2>
+            <Switch
+              className="ml-auto"
+              name="darkMode"
+              checked={settingsState.darkMode}
+              onChange={onSettingsChange}
+            />
           </div>
 
-          <div className="ml-5">
-            <div className="flex flex-row">
-              <h3>Username visible on posts</h3>
-              <Switch
-                className="ml-auto"
-                name="usernameVisibleOnPosts"
-                checked={settingsState.usernameVisibleOnPosts}
-                onChange={onSettingsChange}
-              />
-            </div>
+          <Divider className="my-2 bg-slate-300 bg-opacity-60" />
 
-            <div className="flex flex-row">
-              <h3>Username visible on comments</h3>
-              <Switch
-                className="ml-auto"
-                checked={settingsState.usernameVisibleOnComments}
-                name="usernameVisibleOnComments"
-                onChange={onSettingsChange}
-              />
-            </div>
-          </div>
-        </div>
-
-        <Divider className="my-2 bg-slate-300 bg-opacity-60" />
-
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center mb-2">
-            <b>NSFW 🔞:</b>
+          <div className="flex flex-row items-center">
+            <h2>Mobile Notifications</h2>
+            <Switch
+              className="ml-auto"
+              name="mobileNotify"
+              checked={settingsState.mobileNotify}
+              onChange={onSettingsChange}
+            />
           </div>
 
-          <div className="ml-5">
-            <div className="flex flex-row">
-              <h3>Show sexual content</h3>
-              <Switch
-                className="ml-auto"
-                name="showPorn"
-                checked={settingsState.showPorn}
-                onChange={onSettingsChange}
-              />
+          <Divider className="my-2 bg-slate-300 bg-opacity-60" />
+
+          <div className="flex flex-row items-center">
+            <h2>Desktop Notifications</h2>
+            <Switch
+              className="ml-auto"
+              name="desktopNotify"
+              checked={settingsState.desktopNotify}
+              onChange={onSettingsChange}
+            />
+          </div>
+
+          <Divider className="my-2 bg-slate-300 bg-opacity-60" />
+
+          <div className="flex flex-col">
+            <div className="flex flex-row items-center mb-2">
+              <b>Privacy:</b>
             </div>
 
-            <div className="flex flex-row">
-              <h3>Show violence</h3>
-              <Switch
-                className="ml-auto"
-                name="showViolence"
-                checked={settingsState.showViolence}
-                onChange={onSettingsChange}
-              />
+            <div className="ml-5">
+              <div className="flex flex-row">
+                <h3>Username visible on posts</h3>
+                <Switch
+                  className="ml-auto"
+                  name="usernameVisibleOnPosts"
+                  checked={settingsState.usernameVisibleOnPosts}
+                  onChange={onSettingsChange}
+                />
+              </div>
+
+              <div className="flex flex-row">
+                <h3>Username visible on comments</h3>
+                <Switch
+                  className="ml-auto"
+                  checked={settingsState.usernameVisibleOnComments}
+                  name="usernameVisibleOnComments"
+                  onChange={onSettingsChange}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="ml-auto mt-5 mb-3  flex flex-row">
-          <Button
-            color="secondary"
-            variant="outlined"
-            className="mr-2"
-            href="/settings"
-          >
-            Cancel
-          </Button>
-          <Button
-            color="primary"
-            variant="outlined"
-            className="mr-2"
-            onClick={settingsSubmit}
-          >
-            Save
-          </Button>
+          <Divider className="my-2 bg-slate-300 bg-opacity-60" />
+
+          <div className="flex flex-col">
+            <div className="flex flex-row items-center mb-2">
+              <b>NSFW 🔞:</b>
+            </div>
+
+            <div className="ml-5">
+              <div className="flex flex-row">
+                <h3>Show sexual content</h3>
+                <Switch
+                  className="ml-auto"
+                  name="showPorn"
+                  checked={settingsState.showPorn}
+                  onChange={onSettingsChange}
+                />
+              </div>
+
+              <div className="flex flex-row">
+                <h3>Show violence</h3>
+                <Switch
+                  className="ml-auto"
+                  name="showViolence"
+                  checked={settingsState.showViolence}
+                  onChange={onSettingsChange}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="ml-auto mt-5 mb-3  flex flex-row">
+            <Button
+              color="secondary"
+              variant="outlined"
+              className="mr-2"
+              href="/settings"
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              variant="outlined"
+              className="mr-2"
+              onClick={settingsSubmit}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

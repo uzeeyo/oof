@@ -5,17 +5,20 @@ import Layout from "../components/Layout";
 
 import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "../config/theme";
-import { AuthProvider} from "../lib/AuthProvider"
+import { AuthProvider } from "../lib/AuthProvider";
+import { TailwindProvider } from "../lib/TailwindProvider";
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <AuthProvider>
       <Layout>
         <ThemeProvider theme={theme}>
-          <div className="flex flex-col min-h-screen relative bg-[#010902]">
-            <Header />
-            <Component {...pageProps} />
-          </div>
+          <TailwindProvider>
+            <div className="flex flex-col min-h-screen relative bg-slate-100 dark:bg-gray-900">
+              <Header />
+              <Component {...pageProps} />
+            </div>
+          </TailwindProvider>
         </ThemeProvider>
       </Layout>
     </AuthProvider>

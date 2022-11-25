@@ -14,7 +14,6 @@ import IPost from "../lib/types/IPost";
 import { useRouter } from "next/dist/client/router";
 import moment from "moment";
 import Comments from "./Comments";
-import { useUpdateEffect } from "react-use";
 import { useAuth } from "../lib/AuthProvider";
 
 type Props = {
@@ -42,24 +41,23 @@ const Secret = ({ secret, deletePost }: Props) => {
 
   const onLikeChange = async (e: ChangeEvent<HTMLInputElement>) => {
     setLiked(e.target.checked);
-  };
-
-  useUpdateEffect(() => {
-    fetch(`/api/posts/${secret.id}/like`, {
+    const res = await fetch(`/api/posts/${secret.id}/like`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ liked }),
-    }).then((res) => {
-      if (res.ok) {
-        if (res.status === 201 && Number(likeCount) < 999)
-          setLikeCount((Number(likeCount) + 1).toString());
-        if (res.status === 200 && Number(likeCount) < 999)
-          setLikeCount((Number(likeCount) - 1).toString());
-      }
+      body: JSON.stringify({ liked: e.target.checked }),
     });
-  }, [liked]);
+
+    if (res.ok) {
+      if (res.status === 201 && Number(likeCount) < 999)
+        setLikeCount((Number(likeCount) + 1).toString());
+      if (res.status === 200 && Number(likeCount) < 999)
+        setLikeCount((Number(likeCount) - 1).toString());
+    } else {
+      setLiked(!e.target.checked);
+    }
+  };
 
   //FOR: Delete button
   const handleDeletePost = async () => {
@@ -115,12 +113,12 @@ const Secret = ({ secret, deletePost }: Props) => {
 
   return (
     <div
-      className={`${style.secret} flex flex-col rounded-md border border-green-400 w-80 md:w-96`}
+      className={`${style.secret} flex flex-col rounded-md border border-green-400 w-80 md:w-96 dark:text-slate-200 `}
     >
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <p className="text-slate-200 text-sm ml-1 mt-1">{"> " + secret.id}</p>
-          <p className="text-xs ml-2 text-slate-400 select-none">
+          <p className="text-sm ml-1 mt-1">{"> " + secret.id}</p>
+          <p className="text-xs ml-2 text-slate-600 dark:text-slate-400 select-none">
             {moment(secret.createdAt).format("MMM, DD YYYY")}
           </p>
         </div>
@@ -152,7 +150,7 @@ const Secret = ({ secret, deletePost }: Props) => {
         />
       )}
       <div className="secret-text text-wrap flex-grow pl-4 pr-4 pb-2">
-        <div className={`${style.postlink} text-xl text-slate-100`}>
+        <div className={`${style.postlink} text-xl dark:text-slate-100`}>
           {formatted}
         </div>
       </div>
@@ -191,11 +189,13 @@ const Secret = ({ secret, deletePost }: Props) => {
           className={`${style["secret-menu-item"]}`}
           checked={liked}
           onChange={onLikeChange}
-          disabled={isLoggedIn ? false : true}
+          disabled={!isLoggedIn}
         />
       </div>
 
-      <Comments postID={secret.id} visibility={commentVisibility} />
+      {commentVisibility && (
+        <Comments postID={secret.id} visibility={commentVisibility} />
+      )}
     </div>
   );
 };

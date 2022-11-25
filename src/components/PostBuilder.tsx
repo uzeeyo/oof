@@ -81,7 +81,13 @@ const PostBuilder = ({ addPost }: Props) => {
             value={text}
             onChange={onTextChange}
           />
-          <div className="flex flex-row mt-2 items-center w-full">
+          <div className="flex flex-row mt-2 mr-2 md:mr-4 justify-end items-center w-full">
+            {errorVisible && (
+              <b className="text-red-500 text mr-2 md:mr-4">Error</b>
+            )}
+            {loadingVisible && (
+              <CircularProgress className="mr-2 md:mr-4 p-2" />
+            )}
             <input
               type="file"
               accept="image/*"
@@ -89,29 +95,16 @@ const PostBuilder = ({ addPost }: Props) => {
               id="image_upload"
               onChange={onSelectedImageChange}
             />
-            <input
-              type="file"
-              accept="video/*"
-              hidden={true}
-              id="video_upload"
-            />
-            <label htmlFor="image_upload" className="cursor-pointer ml-2 mr-1">
+            <label
+              htmlFor="image_upload"
+              className="cursor-pointer mr-2 md:mr-4"
+            >
               <Image className="h-7 w-7" color="secondary" />
             </label>
-            <label htmlFor="video_upload" className="cursor-pointer mr-1">
-              <Videocam className="h-8 w-8" color="secondary" />
-            </label>
 
-            <div className="ml-auto mr-2 md:mr-4 flex flex-row items-center">
-              {errorVisible && <b className="text-red-500 text mr-2">Error</b>}
-              {loadingVisible && <CircularProgress className="mr-2 p-2" />}
-              <Button
-                variant="outlined"
-                type="submit"
-              >
-                Post
-              </Button>
-            </div>
+            <Button variant="outlined" type="submit">
+              Post
+            </Button>
           </div>
         </div>
       </form>
