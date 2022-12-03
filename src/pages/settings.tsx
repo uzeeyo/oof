@@ -39,7 +39,13 @@ const Settings: NextPage<Props> = ({ settings }) => {
       },
       body: JSON.stringify(settingsState),
     }).then((res) => {
-      if (res.ok) setSuccessfulVisible(true);
+      if (res.ok) {
+        setSuccessfulVisible(true);
+        localStorage.setItem(
+          "themeMode",
+          settingsState.darkMode === true ? "dark" : "false"
+        );
+      }
     });
   };
 
@@ -47,7 +53,7 @@ const Settings: NextPage<Props> = ({ settings }) => {
     <>
       <Meta title="oof - Settings" description="Browse the latest posts." />
       <div className="flex flex-col items-center mt-10 dark:text-slate-300">
-        <div className="flex flex-col border border-slate-300 rounded-lg p10 md:w-96">
+        <div className="flex flex-col border border-slate-600 dark:border-slate-300 rounded-lg p10 md:w-96">
           <div className="flex flex-row items-center">
             <h2>Dark Mode</h2>
             <Switch

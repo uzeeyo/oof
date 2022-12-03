@@ -51,13 +51,17 @@ const Header = (props: Props) => {
   };
 
   return (
-    <header className={style.Header}>
+    <header className="bg-[var(--green)]">
       <div>
         <div className="flex flex-row items-center">
           <div className="p-2">
             <Link href="/" className="p-20">
               <a>
-                <img src="/images/logo.png" className="w-10 md:w-20" />
+                <img
+                  src="/images/logo.png"
+                  alt="Logo"
+                  className="w-10 md:w-20"
+                />
               </a>
             </Link>
           </div>
@@ -77,10 +81,10 @@ const Header = (props: Props) => {
           <IconButton>
             <Visibility color="secondary" className="w-7 h-7" />
           </IconButton>
-          
+
           {isLoggedIn && (
             <IconButton onClick={handleClick}>
-              <PersonIcon className="w-7 h-7" />
+              <PersonIcon className="w-7 h-7" htmlColor="#000" />
             </IconButton>
           )}
 
