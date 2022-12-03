@@ -77,7 +77,7 @@ model User {
 
 model UserSettings {
   id                        String        @id @default(cuid())
-  darkMode                  Boolean       @default(false)
+  darkMode                  Boolean       @default(true)
   desktopNotify             Boolean       @default(false)
   mobileNotify              Boolean       @default(false)
   usernameVisibleOnPosts    Boolean       @default(false)
@@ -85,14 +85,16 @@ model UserSettings {
   showPorn                  Boolean       @default(false)
   showViolence              Boolean       @default(false)
   userId                    String        @unique
-  user              User          @relation(fields: [userId], references: [id])
+  user                      User          @relation(fields: [userId], references: [id])
 }
 
 model Report {
   id            String            @id @default(cuid())
   postId        String
   userId        String
+  text          String
   post          Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
   user          User              @relation(fields: [userId], references: [id])
+  @@unique([userId, postId], map: "reports_userId_postId")
 
 }
