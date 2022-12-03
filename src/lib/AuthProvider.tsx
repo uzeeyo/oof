@@ -42,7 +42,7 @@ export const AuthProvider = ({ children }: Props) => {
     });
     if (res.ok) {
       const data = await res.json();
-      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("userId", data.id);
       setIsLoggedIn(true);
       router.push("/posts");
     } else {
