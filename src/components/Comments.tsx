@@ -3,7 +3,6 @@ import { Comment as PostComment } from "@prisma/client";
 import { Divider } from "@mui/material";
 import moment from "moment";
 import { Send } from "@mui/icons-material";
-import style from "../styles/Secret.module.css";
 import { useUpdateEffect } from "react-use";
 import { useAuth } from "../lib/AuthProvider";
 
@@ -14,13 +13,7 @@ type Props = {
 
 const Comments = ({ postID, visibility }: Props) => {
   const { isLoggedIn } = useAuth();
-  const [inputOpen, inputClosed] = [
-    "border pb-1 pt-1 max-h-[50px]",
-    "border-0 pb-0 pt-0 max-h-0",
-  ];
   const [newComment, setNewComment] = useState("");
-  const [commentMode, setCommentMode] = useState("comments-closed");
-  const [inputStyle, setInputBorder] = useState(inputClosed);
   const [commentPage, setCommentPage] = useState<number>(1);
   const [commentVisibility, setCommentVisibility] = useState(visibility);
   const [comments, setComments] = useState<
@@ -29,10 +22,6 @@ const Comments = ({ postID, visibility }: Props) => {
 
   useUpdateEffect(() => {
     setCommentVisibility(!commentVisibility);
-    setCommentMode(
-      commentMode == "comments-closed" ? "comments-open" : "comments-closed"
-    );
-    setInputBorder(inputStyle === inputClosed ? inputOpen : inputClosed);
   }, [visibility]);
 
   const loadMoreComments = () => {
@@ -84,7 +73,6 @@ const Comments = ({ postID, visibility }: Props) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setComments({
           comments: [...(comments?.comments || []), data],
           additional: comments?.additional || false,
@@ -133,29 +121,17 @@ const Comments = ({ postID, visibility }: Props) => {
       )}
 
       {isLoggedIn && (
-        <div
-          className={`flex flex-row w-full ${style[commentMode]} ${style["comments"]}`}
-        >
+        <div className={`flex flex-row w-full mb-3 mt-1`}>
           <form className={`flex flex-row w-full items-center`}>
             <input
               type="text"
-              className={
-                `border-gray-400 rounded-2xl focus:outline-none w-full pl-3 pr-3 ml-2 ${style["input-anim"]} bg-transparent text-slate-100 ` +
-                inputStyle
-              }
+              className={`border border-gray-400 rounded-2xl focus:outline-none w-full px-3 py-1 mx-3 bg-transparent `}
               placeholder="Comment"
               value={newComment}
               onChange={onCommentTextChange}
             />
-            <button
-              type="submit"
-              className="ml-3 mr-2"
-              onClick={onCommentSubmit}
-            >
-              <Send
-                color="primary"
-                className={`${style[commentMode]} ${style["button-anim"]}`}
-              />
+            <button type="submit" className="mr-2" onClick={onCommentSubmit}>
+              <Send color="primary" />
             </button>
           </form>
         </div>
