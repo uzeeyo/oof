@@ -1,6 +1,17 @@
 import React, { useState, MouseEvent, ChangeEvent } from "react";
 import style from "../styles/Secret.module.css";
-import { Checkbox, Menu, MenuItem } from "@mui/material/";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Menu,
+  MenuItem,
+  TextField,
+} from "@mui/material/";
 import {
   Favorite,
   FavoriteBorder,
@@ -59,6 +70,21 @@ const Secret = ({ secret, deletePost }: Props) => {
     }
   };
 
+  //FOR: Report button
+  const [reportText, setReportText] = useState("");
+  const handleReport = async () => {
+    fetch(`/api/${secret.id}/report`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: reportText }),
+    }).then((res) => {
+      if (res.ok) {
+      }
+    });
+  };
+
   //FOR: Delete button
   const handleDeletePost = async () => {
     const res = await fetch(`/api/posts/${secret.id}/delete`, {
@@ -111,6 +137,9 @@ const Secret = ({ secret, deletePost }: Props) => {
     });
   }
 
+  //FOR: Report
+  const [reportDialogOpen, setReportDialogOpen] = useState(false);
+
   return (
     <div
       className={`${style.secret} flex flex-col rounded-md border border-green-400 w-80 md:w-96 dark:text-slate-200 `}
@@ -139,8 +168,32 @@ const Secret = ({ secret, deletePost }: Props) => {
           Delete
         </MenuItem>
         <MenuItem>Share...</MenuItem>
-        <MenuItem>Report</MenuItem>
+        <MenuItem onClick={() => setReportDialogOpen(true)}>Report</MenuItem>
       </Menu>
+
+      <Dialog
+        className="bg-slate-500"
+        open={reportDialogOpen}
+        onClose={() => {
+          setReportDialogOpen(false);
+        }}
+      >
+        <DialogTitle>Report</DialogTitle>
+
+        <DialogContent>
+          <DialogContentText>
+            Please include why you think this content is against the rules in
+            the text below.
+          </DialogContentText>
+          <TextField multiline rows={3} maxRows={5} className="w-full mt-4" />
+        </DialogContent>
+
+        <DialogActions>
+          <Button variant="outlined" color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {secret.imageUrl && (
         <img
