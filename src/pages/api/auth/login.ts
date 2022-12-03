@@ -3,24 +3,44 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import moment from "moment";
+import { loginSchema } from "../../../lib/validationSchemas";
+import { ZodError } from "zod";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method == "POST") {
     const { username, password } = req.body;
 
-    if (!username || !password)
-      return res.status(400).send("Username and password required.");
-
     try {
-      const user = await prisma.user.findFirst({
+      loginSchema.parse(req.body);
+
+      const user = await prisma.user.findUnique({
         where: {
           username: username,
         },
+        select: {
+          id: true,
+          username: true,
+          password: true,
+          email: true,
+          emailVerified: true,
+          settings: {
+            select: {
+              darkMode: true,
+              // desktopNotify: true,
+              // mobileNotify: true,
+              // usernameVisibleOnPosts: true,
+              // usernameVisibleOnComments: true,
+              // showPorn: true,
+              // showViolence: true,
+            },
+          },
+        },
       });
 
-      if (!user) return res.status(400).send("Username or password incorrect.");
+      if (!user) return res.status(403).end();
+      const { password: storedPassword, ...formattedUser } = user;
 
-      const match = await compare(password, user.password!);
+      const match = await compare(password, storedPassword!);
       if (match) {
         //If username & password are correct return a token
         const token = sign(
@@ -40,12 +60,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               "days"
             )}`
           )
-          .send({userId: user.id})
+          .send(formattedUser);
       } else {
         //If usernamae/password is wrong
-        return res.status(400).end();
+        return res.status(403).end();
       }
     } catch (err) {
+      if (err instanceof ZodError) return res.status(400).end();
       //Connection errors
       console.log(err);
       return res.status(500).send("An error has occured.");
