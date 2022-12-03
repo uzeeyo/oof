@@ -22,6 +22,11 @@ export const registrationSchema = z.object({
     .min(6),
 });
 
+export const reportSchema = z.object({
+  text: z
+    .string({ required_error: "Username is required." })
+});
+
 export const postSchema = z.object({
   text: z
     .string({ required_error: "Username is required." })
