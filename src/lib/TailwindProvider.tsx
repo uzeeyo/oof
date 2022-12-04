@@ -4,6 +4,7 @@ import {
   ThemeProvider as MuiProvider,
 } from "@mui/material/styles";
 import { dark } from "@mui/material/styles/createPalette";
+import { useAuth } from "./AuthProvider";
 
 type Props = {
   children?: React.ReactNode;
@@ -22,8 +23,9 @@ const TailwindContext = createContext({
 export const useTheme = () => useContext(TailwindContext);
 
 export const ThemeProvider = ({ children }: Props) => {
+  const { isLoggedIn } = useAuth();
   useEffect(() => {
-    if (!localStorage.getItem("themeMode")) {
+    if (!localStorage.getItem("themeMode") && isLoggedIn) {
       fetch("/api/settings/darkMode")
         .then((res) => res.json())
         .then((data) => {
