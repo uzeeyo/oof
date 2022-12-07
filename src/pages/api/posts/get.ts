@@ -33,86 +33,91 @@ export async function getPosts(
 ) {
   //Runs first if filtering by tags
   //VERY MESSY, FIND A BETTER WAY
-  let posts;
-  if (tag) {
-    const formattedTag = `#${tag}`;
-    posts = await prisma.post.findMany({
-      skip: skip || 0,
-      take: 10,
-      where: {
-        archivedAt: null,
-        tags: {
-          some: {
-            tag: {
-              name: formattedTag,
+  try {
+    let posts;
+    if (tag) {
+      const formattedTag = `#${tag}`;
+      posts = await prisma.post.findMany({
+        skip: skip || 0,
+        take: 10,
+        where: {
+          archivedAt: null,
+          tags: {
+            some: {
+              tag: {
+                name: formattedTag,
+              },
             },
           },
         },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        text: true,
-        imageUrl: true,
-        likes: {
-          where: {
-            userId: userId || "",
-          },
-          select: {
-            liked: true,
-          },
+        orderBy: {
+          createdAt: "desc",
         },
-        _count: {
-          select: {
-            likes: true,
+        select: {
+          id: true,
+          text: true,
+          imageUrl: true,
+          likes: {
+            where: {
+              userId: userId || "",
+            },
+            select: {
+              liked: true,
+            },
           },
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
+          createdAt: true,
         },
-        createdAt: true,
-      },
-    });
-  } else {
-    //Runs if query is not filtering by tags
-    posts = await prisma.post.findMany({
-      skip: skip || 0,
-      take: 10,
-      where: {
-        archivedAt: null,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-      select: {
-        id: true,
-        text: true,
-        imageUrl: true,
-        likes: {
-          where: {
-            userId: userId || "",
-          },
-          select: {
-            liked: true,
-          },
+      });
+    } else {
+      //Runs if query is not filtering by tags
+      posts = await prisma.post.findMany({
+        skip: skip || 0,
+        take: 10,
+        where: {
+          archivedAt: null,
         },
-        _count: {
-          select: {
-            likes: true,
-          },
+        orderBy: {
+          createdAt: "desc",
         },
-        createdAt: true,
-      },
-    });
-  }
+        select: {
+          id: true,
+          text: true,
+          imageUrl: true,
+          likes: {
+            where: {
+              userId: userId || "",
+            },
+            select: {
+              liked: true,
+            },
+          },
+          _count: {
+            select: {
+              likes: true,
+            },
+          },
+          createdAt: true,
+        },
+      });
+    }
 
-  return posts.map((post) => {
-    let filteredPost: any = { ...post };
-    delete filteredPost.likes;
-    filteredPost.likeCount = convertLikes(filteredPost._count.likes);
-    delete filteredPost._count.likes;
-    filteredPost.liked = post.likes.length > 0 ? true : false;
-    return filteredPost;
-  });
+    return posts.map((post) => {
+      let filteredPost: any = { ...post };
+      filteredPost.createdAt = filteredPost.createdAt.getTime();
+      delete filteredPost.likes;
+      filteredPost.likeCount = convertLikes(filteredPost._count.likes);
+      delete filteredPost._count.likes;
+      filteredPost.liked = post.likes.length > 0 ? true : false;
+      return filteredPost;
+    });
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export const convertLikes = (count: number): string => {
