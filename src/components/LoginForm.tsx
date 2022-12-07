@@ -25,7 +25,7 @@ function LoginForm({}: Props) {
   };
 
   return (
-    <div className="flex flex-col pt-10 pl-20 pr-20 flex-1 bg-black items-center">
+    <div className="flex flex-col pt-10 pl-20 pr-20 flex-1 bg-black bg-opacity-70 items-center">
       <h1 className="text-xl mb-4">Get started!</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <div className="flex border-2 border-slate-400 rounded-3xl p-1 mb-2">
@@ -38,7 +38,7 @@ function LoginForm({}: Props) {
             name="username"
             value={auth.username}
             onChange={authHandler}
-            className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)] text-white"
+            className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)]"
           />
         </div>
 

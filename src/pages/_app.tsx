@@ -11,7 +11,7 @@ function App({ Component, pageProps }: AppProps) {
     <AuthProvider>
       <ThemeProvider>
         <Layout>
-          <div className="flex flex-col min-h-screen relative bg-slate-100 dark:bg-[#121212]">
+          <div className="flex flex-col min-h-screen relative bg-slate-100 dark:bg-[#121212] dark:text-slate-100">
             <Header />
             <Component {...pageProps} />
           </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import type IPost from "../../lib/types/IPost";
 import { GetServerSideProps } from "next";
 
@@ -10,6 +10,7 @@ import { verifyLogin } from "../../lib/auth";
 import { useAuth } from "../../lib/AuthProvider";
 import { getPosts } from "../api/posts/get";
 import { useUpdateEffect } from "react-use";
+import PostLayout from "../../components/PostLayout";
 
 type Props = {
   tags: Array<string>;
@@ -46,15 +47,11 @@ function Index({ tags, currentTag, posts }: Props) {
     <>
       <Meta title="oof - Posts" description="Browse the latest posts." />
 
-      <div className="flex flex-col p20">
-        <Tags tags={tags} currentTag={currentTag} />
+      <div>
+        {/* <Tags tags={tags} currentTag={currentTag} /> */}
         {isLoggedIn && <PostBuilder addPost={addPost} />}
 
-        <div className={`flex flex-col flex-grow flex-gap p20 items-center`}>
-          {currentPosts.map((post) => (
-            <Secret secret={post} key={post.id} deletePost={deletePost} />
-          ))}
-        </div>
+        <PostLayout posts={posts} />
       </div>
     </>
   );
@@ -92,14 +89,14 @@ export const getServerSideProps: GetServerSideProps = async ({
       posts = await getPosts(0, (tag as string) || null, verified.token.userId);
     }
   } catch (err) {
-    console.log(err);
+    posts = [];
   }
 
   return {
     props: {
       tags,
       currentTag: tag || null,
-      posts: JSON.parse(JSON.stringify(posts)),
+      posts,
     },
   };
 };

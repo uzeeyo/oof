@@ -24,6 +24,7 @@ export const useTheme = () => useContext(TailwindContext);
 
 export const ThemeProvider = ({ children }: Props) => {
   const { isLoggedIn } = useAuth();
+
   useEffect(() => {
     if (!localStorage.getItem("themeMode") && isLoggedIn) {
       fetch("/api/settings/darkMode")
@@ -31,13 +32,12 @@ export const ThemeProvider = ({ children }: Props) => {
         .then((data) => {
           localStorage.setItem("themeMode", data.darkMode ? "dark" : "light");
         });
-
-      setTheme(
-        localStorage.getItem("themeMode") === "dark"
-          ? Tailwind.DARK
-          : Tailwind.LIGHT
-      );
     }
+    setTheme(
+      localStorage.getItem("themeMode") === "dark"
+        ? Tailwind.DARK
+        : Tailwind.LIGHT
+    );
   }, []);
 
   const [theme, setTheme] = useState(Tailwind.DARK);

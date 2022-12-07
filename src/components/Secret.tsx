@@ -228,10 +228,7 @@ const Secret = ({ secret, deletePost }: Props) => {
           disabled={isLoggedIn ? false : true}
         />
 
-        <label
-          htmlFor="postLikes"
-          className="ml-auto text-gray-200 text-lg select-none"
-        >
+        <label htmlFor="postLikes" className="ml-auto text-lg select-none">
           {likeCount === "0" ? "" : likeCount}
         </label>
         <Checkbox
