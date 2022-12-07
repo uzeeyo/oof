@@ -31,15 +31,15 @@
 
 # Style
 
-- [ ] Make page style responsive for mobile
+- [x] Make page style responsive for mobile
 
 # Bugs
 
-- [ ] Comment height animation is awkward, text input extends past post border while border is extending
+- [x] Comment height animation is awkward, text input extends past post border while border is extending EDIT: Removed
 
 # Refactoring
 
 - [ ] Switch API calls to tRPC
 - [ ] Merge the queries to return posts
-- [ ] Load posts at on client-side
-- [ ] Move comments into its own component
+- [x] Move comments into its own component
+- [x] Fix zod validation
