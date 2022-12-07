@@ -94,9 +94,11 @@ const Header = (props: Props) => {
             onClose={handleClose}
             onClick={handleClose}
           >
-            <MenuItem>
-              <FavoriteBorder className="mr-2" /> Likes
-            </MenuItem>
+            <Link href={"/posts/liked"}>
+              <MenuItem>
+                <FavoriteBorder className="mr-2" /> Likes
+              </MenuItem>
+            </Link>
             <MenuItem>
               <BookmarkBorder className="mr-2" /> Bookmarks
             </MenuItem>
