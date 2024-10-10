@@ -18,7 +18,13 @@ const PostSingle = ({ post }: Props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const postId = context.params!.postId;
+  const postId = context.params?.postId;
+
+  if (!postId) {
+    return {
+      notFound: true,
+    };
+  }
 
   const { req, res } = context;
   const verified = verifyLogin({ req, res });
