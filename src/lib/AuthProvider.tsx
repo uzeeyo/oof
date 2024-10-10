@@ -3,6 +3,7 @@ import { useContext, createContext, useState, useEffect } from "react";
 
 type User = {
   username: string;
+  email: string;
   password: string;
 };
 
@@ -10,12 +11,33 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const AuthContext = createContext({
+interface AuthContextType {
+  isLoggedIn: boolean;
+  logIn: ({ username, password }: User) => Promise<void>;
+  logOut: () => void;
+  signUp: ({ username, email, password }: User) => Promise<boolean>;
+  darkMode: boolean;
+  clearAuth: () => void;
+  loginError: boolean;
+}
+
+const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
-  logIn: async ({ username, password }: User) => {},
-  logOut: () => {},
+  logIn: async ({ username, password }: User) => {
+    // Implement your login logic here
+    return;
+  },
+  logOut: () => {
+    // Implement your logout logic here
+  },
+  signUp: async ({ username, email, password }: User): Promise<boolean> => {
+    // Implement your signup logic here
+    return false;
+  },
   darkMode: true,
-  clearAuth: () => {},
+  clearAuth: () => {
+    // Implement your clearAuth logic here
+  },
   loginError: false,
 });
 
@@ -50,11 +72,39 @@ export const AuthProvider = ({ children }: Props) => {
       localStorage.setItem("userId", data.id);
       setIsLoggedIn(true);
       localStorage.setItem("themeMode", mode);
-      setDarkMode(mode)
+      setDarkMode(mode);
 
       router.push("/posts");
     } else {
       setLoginError(true);
+    }
+  };
+
+  const signUp = async ({
+    username,
+    email,
+    password,
+  }: User): Promise<boolean> => {
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+
+      if (res.ok) {
+        setIsLoggedIn(true);
+        return true; // success, can redirect after returning
+      } else if (res.status === 409) {
+        return false; // specific conflict error (e.g., username taken)
+      } else {
+        throw new Error("Internal Error");
+      }
+    } catch (error) {
+      console.error(error);
+      return false;
     }
   };
 
@@ -78,6 +128,7 @@ export const AuthProvider = ({ children }: Props) => {
     isLoggedIn,
     logIn,
     logOut,
+    signUp,
     loginError,
     clearAuth,
     darkMode,

@@ -3,11 +3,13 @@ import { Button } from "@mui/material";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ChangeEvent, FormEventHandler, useState } from "react";
+import { useAuth } from "../lib/AuthProvider";
 
 interface Props {}
 
 const Register: NextPage<Props> = ({}) => {
   const router = useRouter();
+  const { signUp } = useAuth();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -24,21 +26,13 @@ const Register: NextPage<Props> = ({}) => {
 
   const onFormSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    }).then((res) => {
-      if (res.ok) {
-        router.push("/posts");
-      } else if (res.status === 409) {
-        setErrorHidden(false);
-      } else {
-        setInternalErrorHidden(false);
-      }
-    });
+    const signedUp = await signUp(formData);
+
+    if (signedUp) {
+      router.push("/posts");
+    } else {
+      setErrorHidden(false);
+    }
   };
 
   return (
