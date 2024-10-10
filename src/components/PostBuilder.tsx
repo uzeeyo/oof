@@ -61,9 +61,9 @@ const PostBuilder = ({ addPost }: Props) => {
   };
 
   return (
-    <div className="flex justify-center mt-5">
+    <div className="flex justify-center mt-5 ">
       <form style={{ width: "40rem" }} onSubmit={onSubmit}>
-        <div className=" p-2 md:p-3 border-gray-400 border-2 rounded-lg flex flex-col items-center">
+        <div className=" p-2 md:p-3 border border-zinc-700 rounded-lg flex flex-col items-center ">
           {image && (
             <div className="relative mb-5">
               <Close
@@ -77,7 +77,7 @@ const PostBuilder = ({ addPost }: Props) => {
           <textarea
             rows={3}
             maxLength={400}
-            className="resize-none p-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 bg-transparent dark:text-slate-100"
+            className="resize-none p-2 w-full ring-1 ring-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 bg-transparent dark:text-slate-100"
             value={text}
             onChange={onTextChange}
           />

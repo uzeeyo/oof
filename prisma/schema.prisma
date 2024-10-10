@@ -5,22 +5,23 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DB_DIRECT_URL")
 }
 
 model Post {
-  id         String               @id(map: "posts_pkey") @default(cuid())
-  userId     String           
-  text       String?            
-  imageUrl   String?            
-  videoUrl   String?            
-  views      Int                  @default(0)
-  createdAt  DateTime             @default(now())
-  archivedAt DateTime?
-  User       User                 @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_posts_users")
-  comments   Comment[]
-  likes      Like[]
-  reports    Report[]
-  tags       PostTag[]
+  id                String               @id(map: "posts_pkey") @default(cuid())
+  userId            String           
+  text              String?            
+  imageUrl          String?            
+  videoUrl          String?            
+  views             Int                  @default(0)
+  createdAt         DateTime             @default(now())
+  archivedAt        DateTime?
+  User              User                 @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_posts_users")
+  comments          Comment[]
+  likes             Like[]
+  reports           Report[]
+  tags              PostTag[]
 }
 
 model Tag {

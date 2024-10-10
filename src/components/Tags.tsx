@@ -16,7 +16,7 @@ function Tags({ tags, currentTag }: Props) {
   };
 
   return (
-    <div className={`flex flex-row ${style.tagbar} flex-align`}>
+    <div className={`flex flex-row ${style.tagbar} flex-align mt-2`}>
       {tags.map((tag) => {
         if (tag == currentTag) {
           return (

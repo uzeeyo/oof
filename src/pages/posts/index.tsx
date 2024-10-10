@@ -1,16 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type IPost from "../../lib/types/IPost";
 import { GetServerSideProps } from "next";
-
-import Secret from "../../components/Secret";
-import Tags from "../../components/Tags";
 import Meta from "../../components/Meta";
 import PostBuilder from "../../components/PostBuilder";
 import { verifyLogin } from "../../lib/auth";
 import { useAuth } from "../../lib/AuthProvider";
 import { getPosts } from "../api/posts/get";
 import { useUpdateEffect } from "react-use";
-import PostLayout from "../../components/PostLayout";
+import Secret from "../../components/Secret";
 
 type Props = {
   tags: Array<string>;
@@ -20,7 +17,7 @@ type Props = {
 
 function Index({ tags, currentTag, posts }: Props) {
   const [currentPosts, setCurrentPosts] = useState<IPost[]>(posts);
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, clearAuth } = useAuth();
 
   useUpdateEffect(() => {
     fetch("/api/posts/get", {
@@ -51,7 +48,11 @@ function Index({ tags, currentTag, posts }: Props) {
         {/* <Tags tags={tags} currentTag={currentTag} /> */}
         {isLoggedIn && <PostBuilder addPost={addPost} />}
 
-        <PostLayout posts={posts} />
+        <div className={`flex flex-col flex-grow flex-gap py-7 items-center`}>
+          {currentPosts.map((post) => (
+            <Secret key={post.id} secret={post} deletePost={deletePost} />
+          ))}
+        </div>
       </div>
     </>
   );

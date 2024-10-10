@@ -11,9 +11,11 @@ function App({ Component, pageProps }: AppProps) {
     <AuthProvider>
       <ThemeProvider>
         <Layout>
-          <div className="flex flex-col min-h-screen relative bg-slate-100 dark:bg-[#121212] dark:text-slate-100">
+          <div className="flex flex-col min-h-screen relative dark:bg-[#121212] text-slate-900 dark:text-slate-200">
             <Header />
-            <Component {...pageProps} />
+            <div className="mt-20">
+              <Component {...pageProps} />
+            </div>
           </div>
         </Layout>
       </ThemeProvider>

@@ -2,16 +2,18 @@ import { ChangeEvent, FormEventHandler, useEffect, useState } from "react";
 import { Comment as PostComment } from "@prisma/client";
 import { Divider } from "@mui/material";
 import moment from "moment";
-import { Send } from "@mui/icons-material";
+import { Close, Send } from "@mui/icons-material";
 import { useUpdateEffect } from "react-use";
 import { useAuth } from "../lib/AuthProvider";
 
 type Props = {
   postID: string;
   visibility: boolean;
+  userReply: string | null;
+  setUserReply: Function;
 };
 
-const Comments = ({ postID, visibility }: Props) => {
+const Comments = ({ postID, visibility, userReply, setUserReply }: Props) => {
   const { isLoggedIn } = useAuth();
   const [newComment, setNewComment] = useState("");
   const [commentPage, setCommentPage] = useState<number>(1);
@@ -97,15 +99,18 @@ const Comments = ({ postID, visibility }: Props) => {
             return (
               <div className="flex flex-col" key={comment.id}>
                 <Divider className="bg-slate-300 bg-opacity-30" />
-                <div className="flex flex-row pl-3 mt-2">
-                  <p className="text-xs text-slate-400">{comment.id}</p>
-                  <p className="ml-auto text-xs text-slate-400 select-none">
+                <div className="flex flex-row pl-3 mt-2 text-slate-600">
+                  <a
+                    className="text-xs cursor-pointer"
+                    onClick={() => setUserReply(comment.id)}
+                  >
+                    {comment.id}
+                  </a>
+                  <p className="ml-auto text-xs select-none">
                     {moment(comment.createdAt).format("MMM DD, YYYY")}
                   </p>
                 </div>
-                <div className="flex flex-row pl-3 mt-1 mb-2 text-slate-200">
-                  {comment.text}
-                </div>
+                <div className="pl-3 mt-1 mb-2">{comment.text}</div>
               </div>
             );
           })}
@@ -121,20 +126,32 @@ const Comments = ({ postID, visibility }: Props) => {
       )}
 
       {isLoggedIn && (
-        <div className={`flex flex-row w-full mb-3 mt-1`}>
-          <form className={`flex flex-row w-full items-center`}>
+        <form className={`flex flex-row w-full items-center mb-3 mt-1`}>
+          <div className="flex flex-col border border-gray-400 rounded-2xl mx-3 w-full overflow-hidden">
+            {userReply && (
+              <>
+                <div className="flex flex-row py-1 px-3 text-sm justify-center">
+                  {"@" + userReply}
+                  <Close
+                    className="ml-auto h-5 w-5 text-zinc-700 hover:text-green-500 cursor-pointer"
+                    onClick={() => setUserReply(null)}
+                  />
+                </div>
+                <Divider variant="middle" />
+              </>
+            )}
             <input
               type="text"
-              className={`border border-gray-400 rounded-2xl focus:outline-none w-full px-3 py-1 mx-3 bg-transparent `}
+              className={`focus:outline-none px-3 py-1 bg-transparent `}
               placeholder="Comment"
               value={newComment}
               onChange={onCommentTextChange}
             />
-            <button type="submit" className="mr-2" onClick={onCommentSubmit}>
-              <Send color="primary" />
-            </button>
-          </form>
-        </div>
+          </div>
+          <button type="submit" className="mr-2" onClick={onCommentSubmit}>
+            <Send color="primary" />
+          </button>
+        </form>
       )}
     </>
   );

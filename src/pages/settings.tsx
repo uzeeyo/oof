@@ -2,6 +2,7 @@ import { Button, Divider, Switch } from "@mui/material";
 import { GetServerSideProps, NextPage } from "next";
 import { ChangeEvent, useEffect, useState } from "react";
 import Meta from "../components/Meta";
+import { useAuth } from "../lib/AuthProvider";
 import { Tailwind, useTheme } from "../lib/TailwindProvider";
 import { getSettings } from "./api/settings/get";
 
@@ -21,6 +22,7 @@ const Settings: NextPage<Props> = ({ settings }) => {
   const [settingsState, setSettingsState] = useState(settings);
   const [successfulVisible, setSuccessfulVisible] = useState(false);
   const { setTheme } = useTheme();
+  const { clearAuth } = useAuth();
 
   const onSettingsChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSuccessfulVisible(false);
@@ -39,6 +41,11 @@ const Settings: NextPage<Props> = ({ settings }) => {
       },
       body: JSON.stringify(settingsState),
     }).then((res) => {
+      if (res.status === 401 || res.status === 403) {
+        clearAuth();
+        return;
+      }
+
       if (res.ok) {
         setSuccessfulVisible(true);
         localStorage.setItem(

@@ -3,7 +3,6 @@ import {
   createTheme,
   ThemeProvider as MuiProvider,
 } from "@mui/material/styles";
-import { dark } from "@mui/material/styles/createPalette";
 import { useAuth } from "./AuthProvider";
 
 type Props = {
@@ -23,15 +22,12 @@ const TailwindContext = createContext({
 export const useTheme = () => useContext(TailwindContext);
 
 export const ThemeProvider = ({ children }: Props) => {
-  const { isLoggedIn } = useAuth();
+  const { darkMode } = useAuth();
+  const [theme, setTheme] = useState(Tailwind.DARK);
 
   useEffect(() => {
-    if (!localStorage.getItem("themeMode") && isLoggedIn) {
-      fetch("/api/settings/darkMode")
-        .then((res) => res.json())
-        .then((data) => {
-          localStorage.setItem("themeMode", data.darkMode ? "dark" : "light");
-        });
+    if (!localStorage.getItem("themeMode") ) {
+      localStorage.setItem("themeMode", darkMode ? "dark" : "light");
     }
     setTheme(
       localStorage.getItem("themeMode") === "dark"
@@ -40,7 +36,6 @@ export const ThemeProvider = ({ children }: Props) => {
     );
   }, []);
 
-  const [theme, setTheme] = useState(Tailwind.DARK);
 
   const currentTheme = useMemo(() => {
     return createTheme({

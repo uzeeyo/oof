@@ -14,6 +14,8 @@ const AuthContext = createContext({
   isLoggedIn: false,
   logIn: async ({ username, password }: User) => {},
   logOut: () => {},
+  darkMode: true,
+  clearAuth: () => {},
   loginError: false,
 });
 
@@ -24,6 +26,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }: Props) => {
   const [loginError, setLoginError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -42,8 +45,13 @@ export const AuthProvider = ({ children }: Props) => {
     });
     if (res.ok) {
       const data = await res.json();
+      const mode = data.settings.darkMode;
+
       localStorage.setItem("userId", data.id);
       setIsLoggedIn(true);
+      localStorage.setItem("themeMode", mode);
+      setDarkMode(mode)
+
       router.push("/posts");
     } else {
       setLoginError(true);
@@ -53,14 +61,27 @@ export const AuthProvider = ({ children }: Props) => {
   const logOut = () => {
     fetch("/api/auth/logout", { method: "POST" }).then((res) => {
       if (res.ok) {
-        localStorage.removeItem("userId");
-        setIsLoggedIn(false);
-        router.push("/");
+        clearAuth();
       }
     });
   };
 
-  const context = { isLoggedIn, logIn, logOut, loginError };
+  const clearAuth = () => {
+    localStorage.removeItem("userId");
+    localStorage.removeItem("themeMode");
+    setDarkMode(true);
+    setIsLoggedIn(false);
+    router.push("/");
+  };
+
+  const context = {
+    isLoggedIn,
+    logIn,
+    logOut,
+    loginError,
+    clearAuth,
+    darkMode,
+  };
 
   return (
     <AuthContext.Provider value={context}>{children}</AuthContext.Provider>

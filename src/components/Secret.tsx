@@ -3,6 +3,7 @@ import style from "../styles/Secret.module.css";
 import {
   Button,
   Checkbox,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -34,7 +35,7 @@ type Props = {
 
 const Secret = ({ secret, deletePost }: Props) => {
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, clearAuth } = useAuth();
 
   //FOR: Post menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -60,6 +61,11 @@ const Secret = ({ secret, deletePost }: Props) => {
       body: JSON.stringify({ liked: e.target.checked }),
     });
 
+    if (res.status === 401 || res.status === 403) {
+      clearAuth();
+      return;
+    }
+
     if (res.ok) {
       if (res.status === 201 && Number(likeCount) < 999)
         setLikeCount((Number(likeCount) + 1).toString());
@@ -80,6 +86,11 @@ const Secret = ({ secret, deletePost }: Props) => {
       },
       body: JSON.stringify({ text: reportText }),
     }).then((res) => {
+      if (res.status === 401 || res.status === 403) {
+        clearAuth();
+        return;
+      }
+
       if (res.ok) {
       }
     });
@@ -90,6 +101,11 @@ const Secret = ({ secret, deletePost }: Props) => {
     const res = await fetch(`/api/posts/${secret.id}/delete`, {
       method: "DELETE",
     });
+
+    if (res.status === 401 || res.status === 403) {
+      clearAuth();
+      return;
+    }
 
     if (res.ok) {
       if (deletePost) {
@@ -104,8 +120,17 @@ const Secret = ({ secret, deletePost }: Props) => {
 
   //FOR: Comments
   const [commentVisibility, setCommentVisibility] = useState(false);
+  const [userReply, setUserReply] = useState<string | null>(null);
   const onCommentsVisibilityChange = async () => {
     setCommentVisibility(!commentVisibility);
+    if (!commentVisibility) setUserReply(null);
+  };
+
+  const addReply = () => {
+    if (!commentVisibility) {
+      setCommentVisibility(true);
+    }
+    setUserReply(secret.id);
   };
 
   //FOR: Post text
@@ -142,11 +167,13 @@ const Secret = ({ secret, deletePost }: Props) => {
 
   return (
     <div
-      className={`${style.secret} flex flex-col rounded-md border border-green-400 w-80 md:w-96 dark:text-slate-200 `}
+      className={`${style.secret} flex flex-col rounded-md border border-zinc-500 dark:border-zinc-700 w-80 md:w-96 dark:text-slate-200 dark:bg-[#0b0b0b] `}
     >
       <div className="flex flex-row m-2">
         <div className="flex flex-col">
-          <p className="text-sm ml-1 mt-1">{"> " + secret.id}</p>
+          <a onClick={addReply} className="text-sm ml-1 mt-1 cursor-pointer">
+            {">" + secret.id}
+          </a>
           <p className="text-xs ml-2 text-slate-600 dark:text-slate-400 select-none">
             {moment(secret.createdAt).format("MMM, DD YYYY")}
           </p>
@@ -166,6 +193,7 @@ const Secret = ({ secret, deletePost }: Props) => {
       >
         <MenuItem className="text-red-600" onClick={handleDeletePost}>
           Delete
+          {<CircularProgress color="error" size={15} className="ml-3" />}
         </MenuItem>
         <MenuItem>Share...</MenuItem>
         <MenuItem onClick={() => setReportDialogOpen(true)}>Report</MenuItem>
@@ -244,7 +272,12 @@ const Secret = ({ secret, deletePost }: Props) => {
       </div>
 
       {commentVisibility && (
-        <Comments postID={secret.id} visibility={commentVisibility} />
+        <Comments
+          postID={secret.id}
+          visibility={commentVisibility}
+          userReply={userReply}
+          setUserReply={setUserReply}
+        />
       )}
     </div>
   );
