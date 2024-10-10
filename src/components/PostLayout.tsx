@@ -9,8 +9,8 @@ const PostLayout = ({ posts }: Props) => {
   return (
     <div className={`flex flex-col flex-grow flex-gap p-7 items-center`}>
       {posts.map((post) => (
-        <div>
-          <Secret key={post.id} secret={post} />
+        <div key={post.id}>
+          <Secret secret={post} />
         </div>
       ))}
     </div>
