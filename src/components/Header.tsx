@@ -51,11 +51,11 @@ const Header = (props: Props) => {
   };
 
   return (
-    <header className="fixed w-full z-50 flex flex-row items-center backdrop-blur bg-black bg-opacity-70">
+    <header className="fixed w-full z-50 py-2 flex flex-row items-center backdrop-blur bg-black bg-opacity-70">
       <div className="p-2">
         <Link href="/" className="p-20">
           <a>
-            <img src="/images/logo.png" alt="Logo" className="w-10 md:w-20" />
+            <img src="/logo.png" alt="Logo" className="w-10 md:w-20" />
           </a>
         </Link>
       </div>
