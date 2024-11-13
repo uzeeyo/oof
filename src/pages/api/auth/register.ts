@@ -19,6 +19,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     bcrypt.hash(password, 10, async (err, hash) => {
       try {
+        const userData = {
+          username,
+          password: hash,
+          email: email || null,
+          settings: {
+            create: {},
+          },
+        };
+
         const user = await prisma.user.upsert({
           where: {
             username_email: {
@@ -27,10 +36,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             },
           },
           update: {},
-          create: {
-            username: username,
-            password: hash,
-            email: email || null,
+          create: userData,
+          include: {
+            settings: true,
           },
         });
 
