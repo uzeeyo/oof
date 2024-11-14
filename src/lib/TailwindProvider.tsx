@@ -26,16 +26,16 @@ export const ThemeProvider = ({ children }: Props) => {
   const [theme, setTheme] = useState(Tailwind.DARK);
 
   useEffect(() => {
-    if (!localStorage.getItem("themeMode") ) {
-      localStorage.setItem("themeMode", darkMode ? "dark" : "light");
-    }
-    setTheme(
-      localStorage.getItem("themeMode") === "dark"
-        ? Tailwind.DARK
-        : Tailwind.LIGHT
-    );
-  }, []);
+    const savedTheme = localStorage.getItem("themeMode");
 
+    let initialTheme: Tailwind = Tailwind.DARK;
+    if (savedTheme) {
+      initialTheme = darkMode ? Tailwind.DARK : Tailwind.LIGHT;
+    }
+
+    setTheme(initialTheme);
+    localStorage.setItem("themeMode", initialTheme);
+  }, [darkMode]);
 
   const currentTheme = useMemo(() => {
     return createTheme({
