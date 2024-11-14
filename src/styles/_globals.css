@@ -169,3 +169,11 @@ body {
   --lightgray: #2d2d2d;
   --lightergray: #484848;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: white;
+  box-shadow: 0 0 0px 1000px #121212 inset;
+  color: white;
+}
