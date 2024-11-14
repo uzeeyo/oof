@@ -6,21 +6,21 @@ import {
 import { ReadStream } from "fs";
 import moment from "moment";
 
-const region = "us-east-1";
+const region = process.env.S3_REGION
 const s3BucketUrl = process.env.S3_BASE_URL
 
 const s3 = new S3Client({
   region,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS!,
-    secretAccessKey: process.env.AWS_SECRET!,
+    accessKeyId: process.env.S3_ACCESS_KEY!,
+    secretAccessKey: process.env.S3_SECRET!,
   },
 });
 
 export const s3Upload = async (filename: string, file: ReadStream): Promise<string> => {
   const path = moment().format("YYYYMMDD") + "/" + filename;
   const params: PutObjectCommandInput = {
-    Bucket: "oof-db",
+    Bucket: process.env.S3_BUCKET,
     Key: path,
     Body: file,
   };
