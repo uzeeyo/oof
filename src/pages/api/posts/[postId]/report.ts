@@ -8,9 +8,12 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const verified = verifyLogin({ req, res });
+    const verified = await verifyLogin({ req, res });
     if (verified.errCode) {
       return res.status(verified.errCode).end();
+    }
+    if (!verified.token) {
+      return res.status(401).send("Unauthorized")
     }
 
     try {

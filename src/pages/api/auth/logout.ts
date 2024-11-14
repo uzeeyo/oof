@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const loggedIn = verifyLogin({ req, res });
+    const loggedIn = await verifyLogin({ req, res });
     if (loggedIn.errCode) {
       return res.status(400).end();
     }

@@ -16,8 +16,8 @@ const Liked: NextPage<Props> = ({ posts }) => {
 export default Liked;
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const verified = verifyLogin({ req, res });
-  if (verified.errCode) {
+  const verified = await verifyLogin({ req, res });
+  if (verified.errCode || !verified.token) {
     return {
       redirect: {
         destination: "/",

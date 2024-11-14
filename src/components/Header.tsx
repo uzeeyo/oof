@@ -33,7 +33,7 @@ const Header = (props: Props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const { logOut } = useAuth();
+  const { logOut, isAdmin } = useAuth();
 
   //FOR: Tag Search
   const router = useRouter();
@@ -51,7 +51,7 @@ const Header = (props: Props) => {
   };
 
   return (
-    <header className="fixed w-full z-50 py-2 flex flex-row items-center backdrop-blur bg-black bg-opacity-70">
+    <header className="fixed w-full z-50 flex flex-row items-center backdrop-blur bg-black bg-opacity-70">
       <div className="p-2">
         <Link href="/" className="p-20">
           <a>
@@ -73,9 +73,11 @@ const Header = (props: Props) => {
       </div>
 
       <div className="mr-2">
-        <IconButton>
-          <Visibility color="secondary" className="w-7 h-7" />
-        </IconButton>
+        {isAdmin && (
+          <IconButton>
+            <Visibility color="secondary" className="w-7 h-7" />
+          </IconButton>
+        )}
 
         {isLoggedIn && (
           <IconButton onClick={handleClick}>

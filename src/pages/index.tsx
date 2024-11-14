@@ -11,7 +11,7 @@ const Home = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
-  const loggedIn = verifyLogin({ req, res });
+  const loggedIn = await verifyLogin({ req, res });
   if (loggedIn.status === "ok") {
     return {
       redirect: {

@@ -11,11 +11,15 @@ export default async function handler(
 ) {
   //To post a comment
   if (req.method === "POST") {
-    const verified = verifyLogin({ req, res });
+    const verified = await verifyLogin({ req, res });
     //Check cookie and verify jwt
     if (verified.errCode) {
       console.log(verified);
       return res.status(verified.errCode).send(verified);
+    }
+
+    if (!verified.token) {
+      return res.status(401).send("Unauthorized")
     }
 
     try {

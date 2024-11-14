@@ -79,12 +79,12 @@ export const getServerSideProps: GetServerSideProps = async ({
     "sad",
     "depression",
   ];
-  const verified = verifyLogin({ req, res });
+  const verified = await verifyLogin({ req, res });
   let posts;
   const { tag } = query;
 
   try {
-    if (verified.status === "err") {
+    if (verified.status === "err" || !verified.token) {
       posts = await getPosts(0, (tag as string) || null);
     } else {
       posts = await getPosts(0, (tag as string) || null, verified.token.userId);

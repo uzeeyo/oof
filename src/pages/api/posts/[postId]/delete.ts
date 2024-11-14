@@ -10,10 +10,15 @@ export default async function handler(
 ) {
   if (req.method === "DELETE") {
     const postId = req.query.postId;
-    const verified = verifyLogin({ req, res });
+    const verified = await verifyLogin({ req, res }, true);
     if (verified.errCode) {
       console.log(verified);
       return res.status(verified.errCode).send(verified);
+    }
+
+    if (!verified.isAdmin) {
+      console.log("Tried to delete post without admin privs");
+      return res.status(403).send("Not authorized.");
     }
 
     try {

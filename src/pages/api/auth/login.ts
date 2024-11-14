@@ -23,15 +23,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           password: true,
           email: true,
           emailVerified: true,
+          isAdmin: true,
           settings: {
             select: {
               darkMode: true,
-              // desktopNotify: true,
-              // mobileNotify: true,
-              // usernameVisibleOnPosts: true,
-              // usernameVisibleOnComments: true,
-              // showPorn: true,
-              // showViolence: true,
             },
           },
         },

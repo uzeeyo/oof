@@ -17,6 +17,7 @@ interface AuthContextType {
   logOut: () => void;
   signUp: ({ username, email, password }: User) => Promise<boolean>;
   darkMode: boolean;
+  isAdmin: boolean;
   clearAuth: () => void;
   loginError: boolean;
 }
@@ -24,20 +25,15 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   logIn: async ({ username, password }: User) => {
-    // Implement your login logic here
     return;
   },
-  logOut: () => {
-    // Implement your logout logic here
-  },
+  logOut: () => {},
   signUp: async ({ username, email, password }: User): Promise<boolean> => {
-    // Implement your signup logic here
     return false;
   },
   darkMode: true,
-  clearAuth: () => {
-    // Implement your clearAuth logic here
-  },
+  isAdmin: false,
+  clearAuth: () => {},
   loginError: false,
 });
 
@@ -49,11 +45,17 @@ export const AuthProvider = ({ children }: Props) => {
   const [loginError, setLoginError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [darkMode, setDarkMode] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    if (userId) setIsLoggedIn(true);
+    console.log(`Local storage userID ${userId}`);
+    const adminStatus = localStorage.getItem("isAdmin") === "true";
+    if (userId) {
+      setIsLoggedIn(true);
+      setIsAdmin(adminStatus);
+    }
   }, []);
 
   const logIn = async ({ username, password }: User) => {
@@ -68,11 +70,11 @@ export const AuthProvider = ({ children }: Props) => {
     if (res.ok) {
       const data = await res.json();
       const mode = data.settings.darkMode;
-
       localStorage.setItem("userId", data.id);
       setIsLoggedIn(true);
       localStorage.setItem("themeMode", mode);
       setDarkMode(mode);
+      localStorage.setItem("isAdmin", data.isAdmin);
 
       router.push("/posts");
     } else {
@@ -132,6 +134,7 @@ export const AuthProvider = ({ children }: Props) => {
     loginError,
     clearAuth,
     darkMode,
+    isAdmin,
   };
 
   return (

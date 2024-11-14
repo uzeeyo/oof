@@ -35,7 +35,7 @@ type Props = {
 
 const Secret = ({ secret, deletePost }: Props) => {
   const router = useRouter();
-  const { isLoggedIn, clearAuth } = useAuth();
+  const { isLoggedIn, clearAuth, isAdmin } = useAuth();
 
   //FOR: Post menu
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -105,11 +105,6 @@ const Secret = ({ secret, deletePost }: Props) => {
       method: "DELETE",
     });
 
-    if (res.status === 401 || res.status === 403) {
-      clearAuth();
-      return;
-    }
-
     if (res.ok) {
       if (deletePost) {
         deletePost(secret.id);
@@ -119,6 +114,7 @@ const Secret = ({ secret, deletePost }: Props) => {
     } else {
       alert("Post not deleted.");
     }
+
     setIsDeleting(false);
   };
 
@@ -195,17 +191,19 @@ const Secret = ({ secret, deletePost }: Props) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         transformOrigin={{ vertical: "top", horizontal: "right" }}
       >
-        <MenuItem className="text-red-600" onClick={handleDeletePost}>
-          Delete
-          {
-            <CircularProgress
-              hidden={!isDeleting}
-              color="error"
-              size={15}
-              className="ml-3"
-            />
-          }
-        </MenuItem>
+        {isAdmin && (
+          <MenuItem className="text-red-600" onClick={handleDeletePost}>
+            Delete
+            {
+              <CircularProgress
+                hidden={!isDeleting}
+                color="error"
+                size={15}
+                className="ml-3"
+              />
+            }
+          </MenuItem>
+        )}
         <MenuItem>Share...</MenuItem>
         <MenuItem onClick={() => setReportDialogOpen(true)}>Report</MenuItem>
       </Menu>

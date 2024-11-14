@@ -9,9 +9,12 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method === "GET") {
-    const verified = verifyLogin({ req, res });
+    const verified = await verifyLogin({ req, res });
 
     if (verified.errCode) return res.status(verified.errCode).end();
+    if (!verified.token) {
+      return res.status(401).send("Unauthorized");
+    }
 
     const settings = await prisma.userSettings.findUnique({
       where: {
@@ -23,7 +26,7 @@ export default async function handler(
     });
 
     if (settings) return res.send(settings);
-    return res.status(404).end()
+    return res.status(404).end();
   } else {
     return res.status(405).end();
   }

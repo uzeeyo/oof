@@ -26,8 +26,11 @@ export const getSettings = async ({
   req: IncomingMessage;
   res: ServerResponse;
 }) => {
-  const verified = verifyLogin({ req, res });
+  const verified = await verifyLogin({ req, res });
   if (verified.errCode) return null;
+  if (!verified.token) {
+    return null;
+  }
 
   try {
     const settings = await prisma.userSettings.findUnique({

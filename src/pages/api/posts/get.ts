@@ -3,12 +3,15 @@ import { verifyLogin } from "../../../lib/auth";
 import prisma from "../../../../prisma/_config";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const verified = verifyLogin({ req, res });
+  const verified = await verifyLogin({ req, res });
 
   //To get comments by pagination
   if (req.method === "POST") {
     let posts;
     const { skip, tag } = req.body;
+    if (!verified.token) {
+      return res.status(401).send("Unauthorized")
+    }
 
     try {
       if (verified.status === "err") {

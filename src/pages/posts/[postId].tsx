@@ -27,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const { req, res } = context;
-  const verified = verifyLogin({ req, res });
+  const verified = await verifyLogin({ req, res });
   const userId = verified.token?.userId;
 
   const post = await prisma.post.findFirst({
