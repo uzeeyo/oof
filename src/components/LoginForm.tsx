@@ -25,12 +25,13 @@ function LoginForm({}: Props) {
   };
 
   return (
-    <div className="flex flex-col pt-10 pl-20 pr-20 flex-1 bg-black bg-opacity-70 items-center">
+    <div className="flex flex-col pt-10 pl-20 pr-20 flex-1 bg-opacity-70 items-center">
       <h1 className="text-xl mb-4">Get started!</h1>
       <form className="flex flex-col" onSubmit={onSubmit}>
         <div className="flex border-2 border-slate-400 rounded-3xl p-1 mb-2">
           <Person htmlColor="#FFF" className="ml-1" />
           <input
+            spellCheck={false}
             placeholder="Username"
             required
             type="text"
@@ -38,7 +39,11 @@ function LoginForm({}: Props) {
             name="username"
             value={auth.username}
             onChange={authHandler}
-            className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)]"
+            className="bg-transparent mr-3 ml-2 focus:outline-none border-b-2 border-transparent focus:border-[color:var(--pink)]
+            dark:autofill:shadow-[0_0_0_1000px_#121212_inset]
+          dark:autofill:text-white
+            dark:autofill:[-webkit-text-fill-color:white]
+            dark:autofill:focus:outline-none"
           />
         </div>
 
