@@ -97,7 +97,10 @@ const Secret = ({ secret, deletePost }: Props) => {
   };
 
   //FOR: Delete button
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const handleDeletePost = async () => {
+    setIsDeleting(true);
     const res = await fetch(`/api/posts/${secret.id}/delete`, {
       method: "DELETE",
     });
@@ -116,6 +119,7 @@ const Secret = ({ secret, deletePost }: Props) => {
     } else {
       alert("Post not deleted.");
     }
+    setIsDeleting(false);
   };
 
   //FOR: Comments
@@ -193,7 +197,14 @@ const Secret = ({ secret, deletePost }: Props) => {
       >
         <MenuItem className="text-red-600" onClick={handleDeletePost}>
           Delete
-          {<CircularProgress color="error" size={15} className="ml-3" />}
+          {
+            <CircularProgress
+              hidden={!isDeleting}
+              color="error"
+              size={15}
+              className="ml-3"
+            />
+          }
         </MenuItem>
         <MenuItem>Share...</MenuItem>
         <MenuItem onClick={() => setReportDialogOpen(true)}>Report</MenuItem>
