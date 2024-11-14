@@ -24,13 +24,14 @@ export const registrationSchema = z.object({
 
 export const reportSchema = z.object({
   text: z
-    .string({ required_error: "Username is required." })
+    .string({ required_error: "Text is required." })
+    .min(4, { message: "Text must be at least 4 characters long." })
 });
 
 export const postSchema = z.object({
   text: z
     .string({ required_error: "Username is required." })
-    .min(4, { message: "Username must be at least 4 characters long" }),
+    .min(4, { message: "Text must be at least 4 characters long." }),
 });
 
 export const commentSchema = z.object({
